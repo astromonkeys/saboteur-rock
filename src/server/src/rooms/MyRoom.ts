@@ -1,9 +1,10 @@
 import { Room, Client, CloseCode } from "colyseus";
-import { MyRoomState } from "./schema/MyRoomState.js";
+import { RoomState } from "./schema/MyRoomState.js";
+import { ServerMessage } from "../../../types.js";
 
 export class MyRoom extends Room {
-  maxClients = 4;
-  state = new MyRoomState();
+  maxClients = 14;
+  state = new RoomState();
 
   messages = {
     yourMessageType: (client: Client, message: any) => {
