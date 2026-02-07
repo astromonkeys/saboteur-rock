@@ -10,6 +10,8 @@ This project has been created using [⚔️ `create-colyseus-app`](https://githu
 npm start
 ```
 
+`npm start` starts Colyseus on `http://localhost:2567` by default
+
 ## Structure
 
 - `index.ts`: main entry point, register an empty room handler and attach [`@colyseus/monitor`](https://github.com/colyseus/colyseus-monitor)

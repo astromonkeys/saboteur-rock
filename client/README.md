@@ -29,6 +29,8 @@ npm run dev
 npm run dev -- --open
 ```
 
+`npm run` starts the server on `http://localhost:5173/` by default.
+
 ## Building
 
 To create a production version of your app:
