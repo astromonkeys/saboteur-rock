@@ -1,0 +1,12 @@
+services:
+  client:
+    build: 
+      context: ./client
+      dockerfile: Containerfile
+    network_mode: "host"
+  
+  server:
+    build:
+      context: ./server
+      dockerfile: Containerfile
+    network_mode: "host"

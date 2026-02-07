@@ -12,5 +12,13 @@ import { listen } from "@colyseus/tools";
 // Import Colyseus config
 import app from "./app.config.js";
 
+import { SR_CLIENT_URL } from "./lib/env.js";
+
+console.log("=".repeat(50)) // start custom logs
+
+console.log(`Using client url: ${ SR_CLIENT_URL }`)
+
+console.log("=".repeat(50)) // end custom logs
+
 // Create and listen on 2567 (or PORT environment variable.)
 listen(app);
