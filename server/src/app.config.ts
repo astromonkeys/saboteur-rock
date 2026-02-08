@@ -10,7 +10,6 @@ import {
  */
 import { MyRoom } from "./rooms/MyRoom.js";
 
-import client_router from './service/client.js';
 import healthcheck_router from './service/healthcheck.js';
 
 const server = defineServer({
@@ -26,7 +25,6 @@ const server = defineServer({
      * Read more: https://expressjs.com/en/starter/basic-routing.html
      */
     express: (app) => {
-        app.use('/client', client_router);
         app.use('/healthcheck', healthcheck_router);
 
         /**

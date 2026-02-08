@@ -25,15 +25,10 @@ You may also need to install the docker-compose engine in order to use compose f
 
 When ran, the client will be available on `http://localhost:5173/` and the server will be available on `http://localhost:2567`.
 
-You can poll each service's healthcheck endpoints and the server's client healthcheck endpoint to validate that everything is running correctly.
-
 ```sh
 # check each service independently
 curl http://localhost:2567/healthcheck
 curl http://localhost:5173/healthcheck
-
-# validates inter-service connectivity
-curl http://localhost:2567/client/healthcheck
 ```
 
 ### Local
