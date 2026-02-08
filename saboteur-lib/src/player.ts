@@ -16,14 +16,14 @@ export class Player {
 }
 
 export interface Role {
-    name: RoleName, // Captain, Medic, Turncoat, etc
+    name: RoleName, // Captain, Medic, Turncoat, etc.
     team: Team, // either Team.STOWAWAYS or Team.PASSENGERS
     ability: RoleName, // same as name, except for ghost
-    description: string[],
-    card: string,// card text
-    tip: string, // Luca's tip
-    prompt: string,
-    withhold: string
+    description: string[], // role description, list of lines of text
+    card: string, // text on game card
+    tip: string, // Luca's tip - nice
+    prompt: string, // ability prompt text
+    withhold: string // withhold ability text
 }
 
 export enum RoleName {

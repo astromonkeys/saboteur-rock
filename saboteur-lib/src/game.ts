@@ -43,14 +43,14 @@ export class Vote {
 }
 
 export class VoteResults {
-    professorSaboteur: boolean = false;
-    veto: boolean = false;
+    professorSaboteur: boolean = false; // did the professor vote with the saboteur?
+    veto: boolean = false; // did the president use their veto?
     votes: [Player, number][] = [];
-    executed?: Player;
-    sos?: Player;
-    silenced?: Player;
-    eliminated: Player | undefined;
-    tie: boolean = false;
+    executed?: Player; // player that was executed, if any
+    sos?: Player; // player that was saved usding the SoS, if any
+    silenced?: Player; // player that was silenced, if any
+    eliminated: Player | undefined; // player that was eliminated (by vote) this round - they may still be saved
+    tie: boolean = false; 
     tieResolved: boolean = true;
     firstPlace: Player[] = []; // store all tied players here. length = 1 if no tie
     saboteurTiebreak?: Player;
