@@ -4,8 +4,10 @@
     "module": "ESNext",
     "declaration": true,
     "emitDeclarationOnly": false,
-    "outDir": "dist",
-    "strict": true
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "outDir": "../saboteur-lib/dist",
+    "strict": true,
   },
   "include": ["src"]
 }

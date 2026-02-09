@@ -8,7 +8,7 @@ import {
 /**
  * Import your Room files
  */
-import { MyRoom } from "./rooms/MyRoom.js";
+import { SaboteurRoom } from "./rooms/SaboteurRoom.js";
 
 import healthcheck_router from './service/healthcheck.js';
 
@@ -17,7 +17,7 @@ const server = defineServer({
      * Define your room handlers:
      */
     rooms: {
-        my_room: defineRoom(MyRoom)
+        my_room: defineRoom(SaboteurRoom)
     },
 
     /**

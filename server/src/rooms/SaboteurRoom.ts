@@ -1,14 +1,20 @@
 import { Room, Client, CloseCode } from "colyseus";
-import { MyRoomState } from "./schema/MyRoomState.js";
+import { GameState } from "./schema/SaboteurRoomSchema.js";
 
-export class MyRoom extends Room {
-  maxClients = 4;
-  state = new MyRoomState();
+export class SaboteurRoom extends Room {
+  maxClients = 14;
+  state = new GameState();
 
   messages = {
     yourMessageType: (client: Client, message: any) => {
       /**
        * Handle "yourMessageType" message.
+       */
+      console.log(client.sessionId, "sent a message:", message);
+    },
+    doSomething: (client: Client, message: any) => {
+      /**
+       * Handle "doSomething" message.
        */
       console.log(client.sessionId, "sent a message:", message);
     }

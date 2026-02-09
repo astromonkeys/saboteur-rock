@@ -19,6 +19,7 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
-    "@sveltejs/kit": "^2.50.2"
+    "@sveltejs/kit": "^2.50.2",
+    "socket.io-client": "^4.8.3"
   }
 }
