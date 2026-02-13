@@ -26,7 +26,6 @@ lerna-debug.log*
 /libpeerconnection.log
 testem.log
 /typings
-/src/server/tmp/
 
 # Editor directories and files
 .vscode/*

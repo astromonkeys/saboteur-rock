@@ -1,7 +1,7 @@
 This is an informal document just for Noah to remember what he's doing
 
 Current:
-- Nothing to see here!
+- single script to build saboteur-lib and run backend & angular dev server
 
 -- = fixed, needs testing
 *** = big ticket item to fix

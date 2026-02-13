@@ -32,13 +32,14 @@ The game ends once either the Saboteur is eliminated, or the Stowaways have gain
 
 To build and run this project locally:
   1. Clone the repository
-  2. Ensure npm and node.js are installed on your system. This project was originally developed with npm v8.5.2 and node v16.14.2. You may need newer versions to use updated versions of angular.
-  3. Open a terminal and run `npm install && ng serve` from the repository root.   
-  4. In another terminal, `cd` to `/src/server` and run `npm install && npm start` to run the backend server.
-  5. Navigate to `http://localhost:4200` in your browser (Chrome works best, but any relatively recent browser should work, including on mobile)
+  2. Ensure npm and node.js are installed on your system. This project was originally developed with npm v10.9.0 and node v22.12.0. You may need newer versions to use updated versions of angular.
+  3. Open a terminal and build saboteur-lib(shared objects and types): `cd saboteur-lib && npm run build`.
+  4. In another terminal, `cd /app/server` and `npm install && npm start` to run the backend server.
+  5. In another terminal, `cd /app/client` and `npm install && npm start` to run the angular dev server.
+  6. Navigate to `http://localhost:4200` in your browser (Any relatively recent browser should work, including on mobile)
 
 Notes:
-  - `/src/server/config.ts` may need to be configured with additional IP addresses - you may need to manually create this file and add this line:
+  - `/app/server/config.ts` may need to be configured with additional IP addresses - you may need to manually create this file and add this line:
     `export const Config = { whitelist: ['http://localhost:4200', <other_local_ip_address>:4200, ...] }`
   In order for the angular server to be accessible from other devices on your local network, you'll need to add your machine's IPv4 address(x.x.x.x) here, in addition to `localhost`. Port 4200 is the default port for angular dev servers. You may need to check your system's firewall as well.
   - For example, to run the angular server on your local network, the command may look like this:
