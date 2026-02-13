@@ -1,0 +1,112 @@
+<div class="container">
+  <!-- Dead -->
+  @if (backend.player.isDead) {
+  <div>
+    <h1>Remaining players are casting their votes</h1>
+    <p>Results will be revealed after all votes are cast</p>
+  </div>
+  } @else {
+  <div>
+    <!-- Ballot -->
+    @if (ss.voteState == types.VoteState.BALLOT) {
+    <div>
+      <h1 style="margin-left: 5px; margin-right: 5px;">Round {{backend.game.roundIndex + 1}} Elimination Ballot</h1>
+      @if(backend.player.role.ability == types.RoleName.MEDIC && backend.game.disableSos) {
+        <p><mat-icon>info</mat-icon> Your SOS is blocked this round </p>
+      }
+      <mat-radio-group class="radio-group" [(ngModel)]="vote.target">
+        @for (player of votablePlayers; track player.name) {
+        <mat-radio-button [value]="player">
+          <app-avatar [name]="player.name" [compact]="true" [vote]="true"></app-avatar>
+        </mat-radio-button>
+        }
+      </mat-radio-group>
+      <div class="big-btn">
+        <button mat-raised-button [disabled]="!vote.target" (click)="finishBallot()" color="primary">Next</button>
+      </div>
+    </div>
+    }
+    <!-- Ability screen -->
+    @if (ss.voteState == types.VoteState.ABILITY && backend.player.role.ability != types.RoleName.PRESIDENT) {
+    <div>
+      <div class="sub-container">
+        <h1>{{backend.player.role.ability}}</h1>
+        <button mat-icon-button (click)="ss.showAbilityDescription = !ss.showAbilityDescription">
+          <mat-icon>{{ss.showAbilityDescription ? "keyboard_arrow_down" : "keyboard_arrow_up"}}</mat-icon>
+        </button>
+      </div>
+      <div class="animate-height" [ngClass]="{'show': ss.showAbilityDescription, 'hide': !ss.showAbilityDescription}">
+        @for (line of backend.player.role.description; track line) {
+        <p style="margin-right: 17px; margin-left: 17px;">{{line}}</p>
+        }
+      </div>
+      <div class="divider"></div>
+      <strong>{{backend.player.role.prompt}}</strong>
+      <div class="divider"></div>
+      <div>
+        <mat-radio-group class="radio-group" [(ngModel)]="vote.abilityTarget">
+          <mat-radio-button [value]=undefined>
+            <app-avatar [hideImage]="true" [name]="backend.player.role.withhold" [compact]="true" [vote]="true"></app-avatar>
+          </mat-radio-button>
+          @for (player of votablePlayers; track player.name) {
+          <mat-radio-button [value]="player">
+            <app-avatar [name]="player.name" [compact]="true" [vote]="true"></app-avatar>
+          </mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
+      <div class="big-btn">
+        <button mat-raised-button (click)="complete()" color="primary">Next</button>
+      </div>
+    </div>
+    }
+    @if (ss.voteState == types.VoteState.ABILITY && backend.player.role.ability == types.RoleName.PRESIDENT) {
+    <div>
+      <h1 style="margin-bottom: 0px;">President</h1>
+      <p>Would you like to veto this round? You may only do this once.</p>
+      <div style="margin-top: 30px;"></div>
+      <mat-radio-group [(ngModel)]="vote.presidentVeto">
+        <mat-radio-button [value]="1">I veto this vote.</mat-radio-button>
+        <mat-radio-button [value]="0">I accept this vote.</mat-radio-button>
+      </mat-radio-group>
+      <div class="big-btn">
+        <button mat-raised-button [disabled]="vote.presidentVeto == -1" (click)="complete()" color="primary">Next</button>
+      </div>
+    </div>
+    }
+    <!-- Wait for other players -->
+    @if (ss.voteState == types.VoteState.WAIT) {
+    <div>
+      <div style="margin-top: 200px;"></div>
+      <p>Your vote has been cast.</p>
+      <p>Thanks for performing your civic duty!</p>
+      <div class="big-btn">
+        @if (backend.player.isHost) {
+        <button mat-raised-button color="primary" (click)="closeVoteDialog()">Close Voting</button>
+        }
+      </div>
+    </div>
+    }
+    <!-- Tiebreaker -->
+    @if (ss.voteState == types.VoteState.TIEBREAKER) {
+    <div>
+      <h1>Tiebreaker vote</h1>
+      <p>Only the Saboteur's vote counts here.</p>
+      <div style="margin-top: 30px;"></div>
+      @for (player of backend.game.voteResults[backend.game.roundIndex].firstPlace; track player.name) {
+      <mat-radio-group [(ngModel)]="tiebreaker">
+        @if (!(backend.player.role.ability == types.RoleName.SABOTEUR && player.name == backend.player.name) && player.name != res.dummyName) {
+        <mat-radio-button [value]="player" color="primary">
+          <app-avatar [name]="player.name" [compact]="true" [vote]="true"></app-avatar>
+        </mat-radio-button>
+        }
+      </mat-radio-group>
+      }
+      <div class="big-btn">
+        <button mat-raised-button (click)="tiebreak()" color="primary">Submit</button>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

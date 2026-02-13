@@ -1,0 +1,51 @@
+@if (ss.showTopBanner()) {
+<div>
+  @if (!backend.player.isDisplay) {
+  <div class="top-banner">
+    <img src="/client/assets/logo/logo.svg" class="logo-small" />
+    <h1 class="code">{{backend.game.code}}</h1>
+  </div>
+  } @else {
+  <div class="top-banner display">
+    <div class="logo-container">
+      <img src="/client/assets/logo/logo.svg" class="logo-large" />
+      <h1>{{backend.game.code}}</h1>
+    </div>
+    @if(ss.uiState == types.UIState.ROUND_DISPLAY && (backend.game?.state == types.GamePhase.MEETING || backend.game?.state == types.GamePhase.TRANSITION) && backend.game?.countdown != -1) {
+      <h1 class="countdown">{{backend.game.countdown}}</h1>
+    }
+    <button class="volume-toggle" mat-icon-button (click)="audio.toggleAudio()">
+      @if (audio.mute) {
+      <mat-icon>volume_off</mat-icon>
+      } @else {
+      <mat-icon>volume_up</mat-icon>
+      }
+    </button>
+  </div>
+  }
+  <div class="banner-spacer"></div>
+</div>
+}
+
+@if (showModal) {
+<div class="modal-wrapper">
+  <div class="modal">
+    <mat-card>
+      <mat-spinner></mat-spinner>
+      <strong>{{getModalMessage()}}</strong>
+    </mat-card>
+  </div>
+</div>
+}
+
+@if (!useDisplayComponent() && !ss.showOptions) {
+<app-player></app-player>
+}
+@if (ss.showOptions) {
+<option-menu></option-menu>
+}
+@if (useDisplayComponent()) {
+<app-display></app-display>
+}
+
+<button #audioSetup hidden (click)="audio.init()"></button>

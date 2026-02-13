@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "outDir": "../saboteur-lib/dist",
     "strict": true,
+    "skipLibCheck": true
   },
   "include": ["src"]
 }

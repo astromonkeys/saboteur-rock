@@ -1,0 +1,65 @@
+@if (display) {
+<canvas #canvas></canvas>
+}
+<div class="wrapper" [ngStyle]="{'background': backend.game.victory == types.Team.STOWAWAYS ? res.stowawayOrange : res.passengerBlue}">
+  <div class="victory">
+    <mat-card style="min-width: 40%; margin-top: 5%;">
+      <mat-card-content>
+        <h1>
+          <span>{{backend.game.victory}}</span> win!
+        </h1>
+      </mat-card-content>
+    </mat-card>
+    @if (!display) {
+    <div style="display: block;">
+      <div class="players"> <!-- Winners -->
+        <mat-card>
+          <mat-card-content>
+            <div>
+              @for (player of livingWinners; track player.name) {
+              <div style="display: flex; align-items: center;">
+                <app-avatar class="avatar" [name]="player.name" [compact]="true"></app-avatar>
+                <img [src]="res.getRoleIcon(player.role.name)" style="height: 25px; " />
+              </div>
+              }
+            </div>
+            <div>
+              @for (player of deadWinners; track player.name) {
+              <div style="display: flex; align-items: center;">
+                <app-avatar class="avatar" [name]="player.name" [compact]="true" [dead]="true"></app-avatar>
+                <img [src]="res.getRoleIcon(player.role.name)" style="height: 25px; " />
+              </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="players" style="scale: 70%;"> <!-- Losers -->
+        <mat-card>
+          <mat-card-content>
+            <div>
+              @for (player of livingLosers; track player.name) {
+              <div style="display: flex; align-items: center;">
+                <app-avatar class="avatar" [name]="player.name" [compact]="true"></app-avatar>
+                <img [src]="res.getRoleIcon(player.role.name)" style="height: 25px; " />
+              </div>
+              }
+            </div>
+            <div>
+              @for (player of deadLosers; track player.name) {
+              <div style="display: flex; align-items: center;">
+                <app-avatar class="avatar" [name]="player.name" [compact]="true" [dead]="true"></app-avatar>
+                <img [src]="res.getRoleIcon(player.role.name)" style="height: 25px; " />
+              </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    }
+    <div class="big-btn">
+      <button mat-raised-button (click)="backend.sendToLobby()">Lobby</button>
+    </div>
+  </div>
+</div>

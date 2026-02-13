@@ -1,0 +1,80 @@
+<div class="container">
+  <mat-grid-list cols="2" rowHeight="70px">
+    <mat-grid-tile>
+      <strong>Meeting Length</strong>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="grid-dropdown">
+        <mat-form-field>
+          <mat-label>Select</mat-label>
+          <mat-select [ngModel]="backend.game.options.meetingDur" (ngModelChange)="backend.game.options.meetingDur = $event; updateGameOptions()">
+            <mat-option [value]=15>15 Seconds</mat-option>
+            <mat-option [value]=30>30 Seconds</mat-option>
+            <mat-option [value]=45>45 Seconds</mat-option>
+            <mat-option [value]=60>1 Minute</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile>
+      <strong>Transition Length</strong>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="grid-dropdown">
+        <mat-form-field>
+          <mat-label>Select</mat-label>
+          <mat-select [ngModel]="backend.game.options.transitionDur" (ngModelChange)="backend.game.options.transitionDur = $event; updateGameOptions()">
+            <mat-option [value]=15>15 Seconds</mat-option>
+            <mat-option [value]=30>30 Seconds</mat-option>
+            <mat-option [value]=45>45 Seconds</mat-option>
+            <mat-option [value]=60>1 Minute</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile>
+      <strong>Marooning</strong>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="grid-dropdown">
+        <mat-form-field>
+          <mat-label>Select</mat-label>
+          <mat-select [ngModel]="backend.game.options.marooningScript" (ngModelChange)="backend.game.options.marooningScript = $event; updateGameOptions()">
+            <mat-option value="Standard">Standard</mat-option>
+            <mat-option value="Theatrical">Theatrical</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <strong>Round 1 Elimination</strong>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="grid-dropdown">
+        <mat-form-field>
+          <mat-label>Select</mat-label>
+          <mat-select [ngModel]="backend.game.options.roundOneElimination" (ngModelChange)="backend.game.options.roundOneElimination = $event; updateGameOptions()">
+            <mat-option [value]=false>Off</mat-option>
+            <mat-option [value]=true>On</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  @for (room of [].constructor(pregame ? 7 : backend.game.options.requiredRooms); track room; let i = $index) {
+  <div class="room-entry">
+    <strong>Room {{i + 1}}</strong>
+    <mat-form-field>
+      <mat-label>Room {{i + 1}} Nickname</mat-label>
+      <input matInput maxlength="15" [ngModel]="backend.game.options.rooms[i]" (ngModelChange)="backend.game.options.rooms[i] = $event; updateGameOptions()" [placeholder]="placeholderRooms[i]"/>
+    </mat-form-field>
+  </div>
+  }
+  <div class="btn">
+    <!-- maybe don't NEED to update options again here, but it's fine if we do -->
+    <button mat-raised-button (click)="updateGameOptions(true)" color="primary">Done</button>
+  </div>
+</div>

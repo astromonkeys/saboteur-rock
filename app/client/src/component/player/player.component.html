@@ -1,0 +1,468 @@
+<!-- Luca's tip + host menus -->
+@if (ss.showTipMenu) {
+<div class="luca-tip">
+  <button mat-icon-button [matMenuTriggerFor]="menu" class="icon-button">
+    <mat-icon>info</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    @if (backend.player?.isHost) {
+    <button mat-menu-item (click)="ss.showOptions = true;">
+      <mat-icon>settings</mat-icon>
+      <span>Game options</span>
+    </button>
+    }
+    @if (backend.player?.isHost) {
+    <button mat-menu-item (click)="adminDialog()">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>Host actions</span>
+    </button>
+    }
+    @if (ss.showLucasTip(backend.game.custom) && !backend.player.isDead) {
+    <button mat-menu-item (click)="lucasTip()">
+      <div class="menu-img">
+        <img src="/client/assets/icons/luca_tip.jpg">
+        <span>Luca's tip</span>
+      </div>
+    </button>
+    }
+    <button mat-menu-item (click)="openWiki()">
+      <mat-icon>library_books</mat-icon>
+      <span>Wiki</span>
+    </button>
+    <button mat-menu-item (click)="audio.toggleAudio()">
+      @if (audio.mute) {
+      <mat-icon>volume_off</mat-icon>
+      }
+      @if (audio.mute) {
+      <span>Unmute</span>
+      }
+      @if (!audio.mute) {
+      <mat-icon>volume_up</mat-icon>
+      }
+      @if (!audio.mute) {
+      <span>Mute</span>
+      }
+    </button>
+    @if (ss.uiState != types.UIState.LOBBY && !backend.player.isHost) {
+    <button mat-menu-item (click)="toast.dialog(types.DialogType.LeaveGameDialog)">
+      <mat-icon>logout</mat-icon>
+      <span> Leave Game</span>
+    </button>
+    }
+  </mat-menu>
+</div>
+}
+
+<!-- Welcome -->
+<div #home class="home fade-in" [hidden]="ss.uiState != types.UIState.HOME">
+  <div class="welcome">
+    <h1>Welcome to</h1>
+    <h1>Saboteur Rock!</h1>
+  </div>
+  <div class="logo">
+    <img src="/client/assets/logo/logo.svg" />
+  </div>
+  <div class="btn-group">
+    <div class="btn-left">
+      <button mat-raised-button (click)="goToSession(true)" color="primary">Host Game</button>
+    </div>
+    <div class="btn-spacer"></div>
+    <div class="btn-right">
+      <button mat-raised-button (click)="goToSession(false)" color="primary">Join Game</button>
+    </div>
+  </div>
+</div>
+
+<!-- (host only) Session creation -->
+@if (ss.uiState == types.UIState.CREATE_SESSION) {
+<div class="create-session">
+  <div class="input bottom">
+    <mat-form-field>
+      <mat-label>Your Name</mat-label>
+      <input matInput maxlength="13" [(ngModel)]="backend.enteredPlayerName" placeholder="xXSwagBoyXx" />
+    </mat-form-field>
+  </div>
+  <div class="avatar-upload">
+    <button mat-stroked-button style="background: rgba(0, 0, 0, 0.08); " (click)="uploadAvatar()">
+      <app-avatar class="avatar" [upload]="true" [imgSrc]="avatarSrc" [name]="'Upload Avatar'" [compact]="true"></app-avatar>
+    </button>
+  </div>
+  @if (showFileUploadError) {
+  <p class="error-text"> Max image size is&nbsp;<strong> 10 MB </strong>. Please choose a smaller file. </p>
+  }
+  <div class="btn-group">
+    <div class="btn-left">
+      <button mat-raised-button (click)="back()">Back</button>
+    </div>
+    <div class="btn-spacer"></div>
+    <div class="btn-right">
+      <button mat-raised-button [disabled]="!backend.enteredPlayerName" (click)="backend.generateGameInstance()" color="primary"> Create Game </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- (host only) Session creation -->
+@if (ss.uiState == types.UIState.CUSTOM_SESSION) {
+<div class="custom-session">
+  <h1 style="margin-bottom: 50px;"> Custom Setup </h1>
+  <mat-grid-list cols="2" rowHeight="70px">
+    <mat-grid-tile>
+      <strong>Your Role</strong>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="grid-dropdown">
+        <mat-form-field>
+          <mat-label>Select</mat-label>
+          <mat-select [ngModel]="customPlayer.role" (ngModelChange)="customPlayer.role = $event">
+            @for (role of types.RoleName | keyvalue; track role) {
+            <div>
+              @if (customRoleIsAvailable(role.value)) {
+              <mat-option [value]="role.value">{{role.value}}</mat-option>
+              }
+            </div>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+    @if (customPlayer.role == types.RoleName.GHOST || customPlayer.role == types.RoleName.DETECTIVE) {
+    <mat-grid-tile>
+      <strong>{{customPlayer.role == types.RoleName.GHOST ? 'Which role did you take from the graveyard?' : 'Which card did you see from the graveyard?'}}</strong>
+    </mat-grid-tile>
+    }
+    @if (customPlayer.role == types.RoleName.GHOST || customPlayer.role == types.RoleName.DETECTIVE) {
+    <mat-grid-tile>
+      <div class="grid-dropdown">
+        <mat-form-field>
+          <mat-label>Select</mat-label>
+          <mat-select [ngModel]="customPlayer.graveyardCard" (ngModelChange)="customPlayer.graveyardCard = $event">
+            @for (role of types.RoleName | keyvalue; track role) {
+            <div>
+              @if (customRoleIsAvailable(role.value, true)) {
+              <mat-option [value]="role.value">{{role.value}}</mat-option>
+              }
+            </div>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+    }
+    @if (customPlayer.role == types.RoleName.MEDIC || (customPlayer.role == types.RoleName.GHOST && customPlayer.graveyardCard == types.RoleName.MEDIC)) {
+    <mat-grid-tile>
+      <mat-label> Who did you use your SOS on last round? </mat-label>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="grid-dropdown">
+        <mat-form-field>
+          <input matInput [ngModel]="customPlayer.sos" (ngModelChange)="customPlayer.sos = $event;" placeholder="Player Name" />
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+    }
+    <!-- TODO: condense this -->
+    @if (customPlayer.role == types.RoleName.PRESIDENT || customPlayer.graveyardCard == types.RoleName.PRESIDENT) {
+    <mat-grid-tile>
+      <mat-label> Have you used your veto ability? </mat-label>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-radio-group [(ngModel)]="customPlayer.usedAbility" layout="row">
+        <mat-radio-button color="primary" [value]="true"> Yes </mat-radio-button>
+        <mat-radio-button color="primary" [value]="false"> No </mat-radio-button>
+      </mat-radio-group>
+    </mat-grid-tile>
+    }
+    @if (customPlayer.role == types.RoleName.EXECUTIONER || customPlayer.graveyardCard == types.RoleName.EXECUTIONER) {
+    <mat-grid-tile>
+      <mat-label> Have you used your execution ability? </mat-label>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-radio-group [(ngModel)]="customPlayer.usedAbility" layout="row">
+        <mat-radio-button color="primary" [value]="true"> Yes </mat-radio-button>
+        <mat-radio-button color="primary" [value]="false"> No </mat-radio-button>
+      </mat-radio-group>
+    </mat-grid-tile>
+    }
+    @if (customPlayer.role == types.RoleName.MEDIC || customPlayer.graveyardCard == types.RoleName.MEDIC) {
+    <mat-grid-tile>
+      <mat-label> Should your SOS be disabled this round? </mat-label>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-radio-group [(ngModel)]="customPlayer.usedAbility" layout="row">
+        <mat-radio-button color="primary" [value]="true"> Yes </mat-radio-button>
+        <mat-radio-button color="primary" [value]="false"> No </mat-radio-button>
+      </mat-radio-group>
+    </mat-grid-tile>
+    }
+  </mat-grid-list>
+  <div class="btn-group">
+    <div class="btn-left">
+      <button mat-raised-button (click)="exitCustomGame()">Back</button>
+    </div>
+    <div class="btn-spacer"></div>
+    <div class="btn-right">
+      <button mat-raised-button [disabled]="!isCustomRoleComplete()" (click)="joinCustomGame()" color="primary">Join Game</button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- (Non-host only) Session join -->
+@if (ss.uiState == types.UIState.JOIN_SESSION) {
+<div class="join-session">
+  <div class="input top">
+    <mat-form-field>
+      <mat-label>Game Code</mat-label>
+      <input matInput maxlength="4" (input)="onCodeInput()" [(ngModel)]="backend.enteredGameCode" placeholder="ABCD" />
+    </mat-form-field>
+  </div>
+  <div class="input bottom">
+    <mat-form-field>
+      <mat-label>Your Name</mat-label>
+      <input matInput maxlength="13" (input)="backend.showPlayerNameError = false" [(ngModel)]="backend.enteredPlayerName" placeholder="xXSwagBoyXx" />
+    </mat-form-field>
+  </div>
+  <div class="avatar-upload">
+    <button mat-stroked-button style="background: rgba(0, 0, 0, 0.08); " (click)="uploadAvatar()">
+      <app-avatar class="avatar" [upload]="true" [imgSrc]="avatarSrc" [name]="'Upload Avatar'" [compact]="true"></app-avatar>
+    </button>
+  </div>
+  @if (backend.showGameCodeError) {
+  <p class="error-text">Game with code&nbsp;<strong>{{backend.enteredGameCode.toUpperCase()}}</strong>&nbsp;does not exist.</p>
+  }
+  @if (backend.showPlayerNameError) {
+  <p class="error-text">Name&nbsp;<strong>{{backend.enteredPlayerName}}</strong>&nbsp;is already taken.</p>
+  }
+  @if (backend.showMaxPlayersError) {
+  <p class="error-text">Game with code&nbsp;<strong>{{backend.enteredGameCode.toUpperCase()}}</strong>&nbsp;is full.</p>
+  }
+  @if (backend.showGameStartedError) {
+  <p class="error-text">Game with code&nbsp;<strong>{{backend.enteredGameCode.toUpperCase()}}</strong>&nbsp;has already begun.</p>
+  }
+  <div class="btn-group">
+    <div class="btn-left">
+      <button mat-raised-button (click)="back()">Back</button>
+    </div>
+    <div class="btn-spacer"></div>
+    <div class="btn-right">
+      <button mat-raised-button [disabled]="(backend.enteredGameCode && backend.enteredGameCode.length != 4) || !backend.enteredPlayerName" (click)="backend.joinExistingGame(backend.enteredGameCode, backend.enteredPlayerName, res.avatar)" color="primary">Join Game</button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Lobby -->
+@if (ss.uiState == types.UIState.LOBBY) {
+<div class="lobby">
+  <mat-grid-list cols="2" rowHeight="78px">
+    @for (player of backend.game.players; track player.name) {
+    <mat-grid-tile>
+      <app-avatar class="avatar" [name]="player.name" [host]="player.isHost" [animated]="true" [shrink]="true"></app-avatar>
+    </mat-grid-tile>
+    }
+  </mat-grid-list>
+  @if (backend.player.isHost) {
+  <div class="btn-group" [ngStyle]="{'top': bgOffset}">
+    <div class="btn-left">
+      <button mat-raised-button (click)="ss.showOptions = true" color="primary">Options</button>
+    </div>
+    <div class="btn-spacer"></div>
+    <div class="btn-right">
+      <button mat-raised-button (click)="backend.startGame()" [disabled]="!optionsCompleted()" color="primary">Start Game</button>
+    </div>
+  </div>
+  } @else {
+  <div class="btn-group" [ngStyle]="{'top': bgOffset}">
+    <div class="btn-center">
+      <button mat-raised-button (click)="toast.dialog(types.DialogType.LeaveGameDialog)" color="primary">Leave</button>
+    </div>
+  </div>
+  }
+</div>
+}
+
+<!-- Role Display -->
+@if (ss.uiState == types.UIState.MAROONING) {
+<div class="role">
+  @if (ss.marooningState == types.MarooningState.NORMAL) {
+  <div class="role-display">
+    <div class="instructions">
+      <h3>Keep your eyes closed</h3>
+      <p>(Unless you are told to open them)</p>
+    </div>
+    <div class="card-container">
+      <img #displayCard class="card-img" (click)="flipCard()" src="/client/assets/roles/{{backend.marooningDone ? backend.player.role.ability: backend.player.role.name}}.svg">
+    </div>
+    <mat-card [ngClass]="{'covered': hideAllegiance, 'uncovered': !hideAllegiance}" [ngStyle]="{'background': this.backend.player.role.team == types.Team.STOWAWAYS ? res.stowawayOrange : res.passengerBlue}">
+      <mat-card-content>
+        <!-- Pre-marooning, Turncoat is always shown as a Passenger, even though in reality they're not based on role assignment -->
+        @if (isTurncoat && !backend.marooningDone) {
+        <h3>You are on the <b>Passengers</b> team</h3>
+        } @else {
+        <h3>You are on the <b>{{this.backend.player.role.team == types.Team.STOWAWAYS ? 'Stowaways' : 'Passengers'}}</b> team</h3>
+        }
+      </mat-card-content>
+    </mat-card>
+    @if (backend.player.isHost && !(marooningStarted && !backend.marooningDone)) {
+    <div class="btn" style="scale: 130%; margin-top: 50px">
+      <button mat-raised-button (click)="maroon();" color="primary">Next</button>
+    </div>
+    }
+  </div>
+  }
+  @if (ss.marooningState == types.MarooningState.DETECTIVE && backend.game.graveyard.length > 0) {
+  <div>
+    <h3 class="instruction">Tap to reveal a card from the graveyard</h3>
+    <div class="cards">
+      <mat-grid-list rowHeight="1:1.6" gutterSize="5px" cols="3">
+        <mat-grid-tile (click)="flipCard(1)">
+          <img #cardOne class="card-img small" src="/client/assets/marooning/Back.svg">
+        </mat-grid-tile>
+        <mat-grid-tile (click)="flipCard(2)">
+          <img #cardTwo class="card-img small" src="/client/assets/marooning/Back.svg">
+        </mat-grid-tile>
+        <mat-grid-tile (click)="flipCard(3)">
+          <img #cardThree class="card-img small" src="/client/assets/marooning/Back.svg">
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+  </div>
+  }
+  @if (ss.marooningState == types.MarooningState.GHOST && backend.player.role.ability) {
+  <div>
+    <strong class="instruction">Choose a role from the graveyard to possess:</strong>
+    <div class="cards">
+      <mat-grid-list rowHeight="1:1.6" gutterSize="5px" cols="3">
+        <mat-grid-tile (click)="flipCard(1)">
+          <img #cardOne class="card-img small" src="/client/assets/marooning/Back.svg">
+        </mat-grid-tile>
+        <mat-grid-tile (click)="flipCard(2)">
+          <img #cardTwo class="card-img small" src="/client/assets/marooning/Back.svg">
+        </mat-grid-tile>
+        <mat-grid-tile (click)="flipCard(3)">
+          <img #cardThree class="card-img small" src="/client/assets/marooning/Back.svg">
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+  </div>
+  }
+</div>
+}
+
+@if (ss.uiState == types.UIState.PRE_ROUND) {
+<div class="pre-round">
+  @if (backend.player.isDead) {
+  <div>
+    <h1>Remaining players are deliberating</h1>
+    <p>Feel free to go listen in - but remember to stay silent!</p>
+  </div>
+  } @else {
+  <h2> Round Summary </h2>
+  @for (player of getPlayerMeetings(); track player.name; let i = $index) {
+  <div class="center-flexbox">
+    <p> Deliberation {{i+1}}:</p>
+    @if (player.name != res.dummyName) {
+    <app-avatar [name]="player.name" [compact]="true"></app-avatar>
+    } @else {
+    <b> {{res.dummyName}} </b>
+    }
+  </div>
+  }
+  }
+  @if (backend.player.isHost) {
+  <div class="big-btn bottom-btn">
+    <button mat-raised-button (click)="backend.startRound()" color="primary">Start Round</button>
+  </div>
+  }
+</div>
+}
+
+<!-- Round/Deliberation Display -->
+@if (ss.uiState == types.UIState.ROUND_DISPLAY) {
+<div class="round">
+  @if (backend.player.isDead && backend.game.state != types.GamePhase.PREVOTE) {
+  <div>
+    <h1>Remaining players are deliberating</h1>
+    <p>Feel free to go listen in - but remember to stay silent!</p>
+    @if (backend.player.isHost) {
+    <button mat-raised-button style="scale: 125%; margin-top: 5px" (click)="this.backend.toggleCountdown()" color="primary">{{backend.game.doTimer ? 'Pause' : 'Resume'}}</button>
+    }
+  </div>
+  }
+  @if (backend.game.state != types.GamePhase.PREVOTE && backend.game.state == types.GamePhase.TRANSITION && !backend.player.isDead) {
+  <div class="meeting-container">
+    <h1>Round {{backend.game.roundIndex + 1}}</h1>
+    <h4>Deliberation {{backend.game.deliberationIndex + 1}}</h4>
+    <h2> You are meeting with </h2>
+    <app-avatar [name]="getMeetingPartner()" [vertical]="true"></app-avatar>
+    <h2> in the {{getMeetingRoom()}} </h2>
+  </div>
+  }
+  @if (backend.game.state != types.GamePhase.PREVOTE && backend.game.state == types.GamePhase.MEETING && !backend.player.isDead) {
+  <div class="meeting-container">
+    <h1>Round {{backend.game.roundIndex + 1}}</h1>
+    <h4>Deliberation {{backend.game.deliberationIndex + 1}}</h4>
+    <h2>Deliberate with {{getMeetingPartner()}}!</h2>
+    <p style="margin-top: -10px;">(You should be in the {{getMeetingRoom()}})</p>
+    <img src="/client/assets/icons/handshake-solid.svg">
+    <p style="margin-top: 30px; margin-bottom: 45px;">Round ends in <b>{{backend.game.countdown}}</b> seconds</p>
+  </div>
+  }
+  <div>
+    @if (backend.game.state == types.GamePhase.TRANSITION && !backend.player.isDead) {
+    <div class="direction">
+      <b>Get to your assigned room!</b>
+      <p>Round starts in <b>{{backend.game.countdown}}</b> seconds</p>
+    </div>
+    }
+    @if (backend.game.state == types.GamePhase.PREVOTE) {
+    <div class="prevote">
+      <h1>Time to vote!</h1>
+      <img src="/client/assets/icons/vote.svg" style="height: 100px;">
+      <p>Please proceed to the voting pit - talking is&nbsp;<b>not</b>&nbsp;allowed!</p>
+      @if (backend.player.isHost) {
+      <button mat-raised-button style="scale: 120%; margin-top: 10px" (click)="this.openVoting()" color="primary">Open Voting</button>
+      }
+    </div>
+    }
+    @if (backend.player.isHost && !backend.player.isDead && backend.game.state != types.GamePhase.PREVOTE) {
+    <button mat-raised-button style="scale: 125%; margin-top: 5px; z-index: 10;" (click)="this.backend.toggleCountdown()" color="primary">{{backend.game.doTimer ? 'Pause' : 'Resume'}}</button>
+    }
+  </div>
+</div>
+}
+
+<!-- Round Paused Modal -->
+@if (ss.uiState == types.UIState.ROUND_DISPLAY && backend.game && !backend.game.doTimer) {
+<div class="round-pause">
+  <div class="inner-modal">
+    <mat-card>
+      <mat-card-content style="padding: 15px; padding-top: 0;">
+        <h3>Game Paused</h3>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+}
+
+<!-- Voting -->
+@if (ss.uiState == types.UIState.VOTING) {
+<div>
+  <app-vote></app-vote>
+</div>
+}
+
+<!-- Results -->
+@if (ss.uiState == types.UIState.VOTE_RESULTS) {
+<div>
+  <app-result></app-result>
+</div>
+}
+
+<!-- Victory -->
+@if (ss.uiState == types.UIState.VICTORY) {
+<div>
+  <app-victory></app-victory>
+</div>
+}

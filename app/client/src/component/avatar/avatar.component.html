@@ -1,0 +1,24 @@
+<div [@.disabled]="!animated" [ngStyle]="{'scale': display ? '120%' : '100%'}">
+  <div #wrapper [@fadeInOut]="{}" [ngClass]="animated ? 'fade-in' : ''">
+    @if (!vertical && !circle) {
+    <div [ngClass]="compact ? 'container compact' : 'container'">
+      @if (!hideImage) {
+      <img [src]="imgSrc" [ngClass]="avatarClass" [ngStyle]="{'margin-left': imgOffset}">
+      }
+      <div [ngStyle]="{'font-size': textSize, 'margin-left': textOffset}">{{displayName}}</div>
+    </div>
+    }
+    @if (vertical) {
+    <div class="container vertical">
+      <img class="avatar-large" [src]="imgSrc">
+      <h1>{{displayName}}</h1>
+    </div>
+    }
+    @if (circle) {
+    <div class="container circle">
+      <img class="avatar" [src]="imgSrc">
+      <b>{{displayName}}</b>
+    </div>
+    }
+  </div>
+</div>

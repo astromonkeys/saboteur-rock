@@ -1,0 +1,37 @@
+.container {
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 82px;
+    padding-bottom: 3%;
+    z-index: 2;
+
+    strong {
+        margin-bottom: 20px;
+    }
+
+    .room-entry {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+
+        strong {
+            margin-top: 18px;
+            margin-right: 10px;
+        }
+
+        mat-form-field {
+            float: left;
+            scale: 90%;
+        }
+    }
+
+    .btn {
+        display: flex;
+        scale: 130%;
+        justify-content: center;
+        margin-top: 30px;
+        padding-bottom: 5px;
+    }
+}

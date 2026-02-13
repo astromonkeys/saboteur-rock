@@ -18,6 +18,16 @@ lerna-debug.log*
 
 *.local
 
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+/src/server/tmp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -33,3 +43,4 @@ lerna-debug.log*
 build/
 .colyseus-cloud.json
 .devmode.json
+config.ts

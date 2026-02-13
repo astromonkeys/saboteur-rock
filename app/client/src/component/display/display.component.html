@@ -1,0 +1,210 @@
+@if (ss.uiState == types.UIState.HOME) {
+<div class="home-display fade-in">
+  <h1>Welcome to Saboteur Rock!</h1>
+  <div class="mid-container">
+    <div class="left">
+      <img src="/client/assets/logo/logo.svg" />
+    </div>
+    <div class="right">
+      <mat-form-field style="scale: 130%;">
+        <mat-label>Game Code</mat-label>
+        <input matInput maxlength="4" (input)="onCodeInput()" [(ngModel)]="backend.enteredGameCode" placeholder="ABCD" />
+      </mat-form-field>
+      <button mat-raised-button audibleClick [disabled]="(backend.enteredGameCode && backend.enteredGameCode.length != 4)" (click)="joinAsDisplay()" color="primary">Join as Display</button>
+      @if (backend.showGameCodeError) {
+      <p class="error-text">Game with
+        code&nbsp;<strong>{{backend.enteredGameCode.toUpperCase()}}</strong>&nbsp;does not exist.</p>
+      }
+      @if (backend.showGameStartedError) {
+      <p class="error-text">Game with
+        code&nbsp;<strong>{{backend.enteredGameCode.toUpperCase()}}</strong>&nbsp;has already begun.</p>
+      }
+    </div>
+  </div>
+</div>
+}
+
+<!-- Lobby -->
+@if (ss.uiState == types.UIState.LOBBY) {
+<div class="lobby-display">
+  <div class="circle">
+    @for (player of backend.game.players; track player.name; let i = $index) {
+    <div class="avatar-wrapper">
+      <app-avatar class="avatar" [ngStyle]="getAvatarPos(i)" [name]="player.name" [host]="player.isHost" [animated]="true" [circle]="true"></app-avatar>
+    </div>
+    }
+    <img src="/client/assets/logo/logo.svg" />
+    <h1 class="logo-text">Saboteur Rock</h1>
+    <h1 class="player-ct">Players: {{backend.game.players.length}}</h1>
+    @for (item of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]; track item; let i = $index) {
+    <div style="position: absolute;" [ngStyle]="getNametagPos(i)">
+      <div class="nametag" [ngStyle]="{'width': nametagWidth + 'px', 'height': nametagHeight + 'px'}"></div>
+    </div>
+    }
+  </div>
+  <h2 class="breathing">
+    <span #splashTextRef class="splash-text" (animationend)="resetSplashText($event)">{{splashText}}</span>
+  </h2>
+</div>
+}
+
+<!-- Role Display -->
+@if (ss.uiState == types.UIState.MAROONING) {
+<div class="role-display">
+  <h1>Check your device for instructions!</h1>
+</div>
+}
+
+<!-- Round/Deliberation Display -->
+@if (ss.uiState == types.UIState.ROUND_DISPLAY && backend.game.state != types.GamePhase.PREVOTE) {
+<div class="round-summary-display">
+  <div class="grid" [ngStyle]="{'margin-top': backend.game.rounds[backend.game.roundIndex][0].length <= 4 ? '40px' : '0px'}">
+    @for (deliberation of backend.game.rounds[backend.game.roundIndex]; track deliberation; let i = $index) {
+    <div class="grid-element">
+      <p class="deliberation-number" [ngClass]="{'focused': i == backend.game.deliberationIndex}">Deliberation {{i + 1}}</p>
+      <table class="meeting-table shadow" [ngClass]="{'focused': i == backend.game.deliberationIndex}">
+        <thead>
+          <tr>
+            <th></th>
+            <th> Players </th>
+            <th></th>
+            <th> Room </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(meeting of deliberation; track meeting) {
+          <tr>
+            <td style="padding-left: 10px">
+              @if (meeting.playerOne.name != res.dummyName) {
+              <app-avatar [name]="meeting.playerOne.name" [compact]="true"></app-avatar>
+              }
+            </td>
+            <td>
+              @if (meeting.playerOne.name != res.dummyName && meeting.playerTwo.name != res.dummyName) {
+              <b>&nbsp;&&nbsp;</b>
+              }
+            </td>
+            <td>
+              @if (meeting.playerTwo.name != res.dummyName) {
+              <app-avatar [name]="meeting.playerTwo.name" [compact]="true"></app-avatar>
+              }
+            </td>
+            <td style="padding: 5px; padding-left: 10px;">
+              {{meeting.room}}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+  </div>
+</div>
+}
+
+<!-- Round Paused Modal -->
+@if (ss.uiState == types.UIState.ROUND_DISPLAY && backend.game && !backend.game.doTimer) {
+<div class="round-pause">
+  <div class="inner-modal">
+    <mat-card>
+      <mat-card-content style="padding: 15px; padding-top: 0;">
+        <h3>Game Paused</h3>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+}
+
+<!-- Voting -->
+@if (ss.uiState == types.UIState.VOTING || backend.game?.state == types.GamePhase.PREVOTE) {
+<div class="vote-display">
+  @if (ss.voteState == types.VoteState.BALLOT) {
+  <div>
+    <h1>Players are casting their votes</h1>
+    <p>Results will be revealed after all votes are cast</p>
+    <br>
+    <p>Votes Counted: </p>
+    <h1> {{backend.game.voted.length}} </h1>
+  </div>
+  }
+  @if (ss.voteState == types.VoteState.TIEBREAKER) {
+  <div>
+    <h1>Players are casting their tiebreaker votes</h1>
+    <p>Results will be revealed after all votes are cast</p>
+    <br>
+    <p>Votes Counted: </p>
+    <h1> {{backend.game.voteResults[backend.game.roundIndex].tiebreakerCt}} </h1>
+  </div>
+  }
+</div>
+}
+
+<!-- Results -->
+@if (ss.uiState == types.UIState.VOTE_RESULTS) {
+<div>
+  <!-- Summary -->
+  <div class="results-display">
+    <h1>Summary</h1>
+    <div class="cards">
+      <div>
+        <mat-card style="width: 100%">
+          <mat-card-content>
+            <div #chart class="chart" style="margin-bottom: -15px;">
+              <apx-chart [series]="ss.chartOptions.series" [title]="ss.chartOptions.title" [colors]="ss.chartOptions.colors" [legend]="ss.chartOptions.legend" [tooltip]="ss.chartOptions.tooltip" [chart]="ss.chartOptions.chart" [dataLabels]="ss.chartOptions.dataLabels" [plotOptions]="ss.chartOptions.plotOptions" [xaxis]="ss.chartOptions.xaxis"></apx-chart>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      @if (backend.game.voteResults[backend.game.roundIndex].tieResolved) {
+      <div class="card-center">
+        <mat-card>
+          <mat-card-content>
+            @if (!backend.game.voteResults[backend.game.roundIndex].veto) {
+            <div>
+              @if(backend.game.roundIndex > 0 || backend.game.options.roundOneElimination) {
+              <p>The player voted off the island is...</p>
+              <app-avatar [name]="backend.game.voteResults[backend.game.roundIndex].eliminated.name" [vertical]="true"></app-avatar>
+              <p>{{backend.game.voteResults[backend.game.roundIndex].eliminated.name}} was{{backend.game.voteResults[backend.game.roundIndex].eliminated.role.ability == types.RoleName.SABOTEUR ? " " : " NOT "}}the Saboteur.</p>
+              } @else {
+              <p>The player who <b> would have been </b> voted off the island is...</p>
+              <app-avatar [name]="backend.game.voteResults[backend.game.roundIndex].eliminated.name" [vertical]="true"></app-avatar>
+              <p>{{backend.game.voteResults[backend.game.roundIndex].eliminated.name}}'s allegiance is to the&nbsp;
+                <b [ngStyle]="{'color': backend.game.voteResults[backend.game.roundIndex].eliminated.role.team == types.Team.STOWAWAYS ? res.stowawayOrange : res.passengerBlue}">{{backend.game.voteResults[backend.game.roundIndex].eliminated.role.team}}</b>
+              </p>
+              }
+            </div>
+            } @else {
+            <div>
+              <p>The player who <b> would have been </b> voted off the island is...</p>
+              <app-avatar [name]="backend.game.voteResults[backend.game.roundIndex].eliminated.name" [vertical]="true"></app-avatar>
+              @if (backend.game.options.roundOneElimination && backend.game.roundIndex == 0) {
+              <p>{{backend.game.voteResults[backend.game.roundIndex].eliminated.name}}'s allegiance remains a mystery.</p>
+              } @else {
+              <p>{{backend.game.voteResults[backend.game.roundIndex].eliminated.name}} survives this round.</p>
+              }
+            </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+      <div class="role-results">
+        @if (backend.game.voteResults[backend.game.roundIndex].veto) {
+        <result-card [inner]="res.vetoHTML()" [bgColor]="res.vetoColor"></result-card>
+        }
+        <result-card [inner]="res.professorSaboteurHTML(this.backend.game.voteResults[this.backend.game.roundIndex].professorSaboteur)" [bgColor]="res.professorSaboteurColor"></result-card>
+        <result-card [inner]="res.sosHTML(this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.sosColor"></result-card>
+        <result-card [inner]="res.silencedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].silenced)" [bgColor]="res.silencedColor"></result-card>
+        <result-card [inner]="res.executedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].executed, backend.game.voteResults[backend.game.roundIndex].veto, this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.executedColor"></result-card>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Victory -->
+@if (ss.uiState == types.UIState.VICTORY) {
+<div>
+  <app-victory [display]="true"></app-victory>
+</div>
+}

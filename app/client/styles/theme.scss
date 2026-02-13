@@ -1,0 +1,24 @@
+// https://m1.material.io/style/color.html#color-color-tool
+
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$primary: mat.define-palette(mat.$cyan-palette, 900);
+$accent: mat.define-palette(mat.$blue-grey-palette, 800);
+$button: mat.define-palette(mat.$cyan-palette, 900);
+
+// The "warn" palette is optional and defaults to red if not specified.
+$warn: mat.define-palette(mat.$red-palette);
+
+$theme: mat.define-light-theme((
+    color: (
+        primary: $primary,
+        accent: $accent,
+        warn: $warn 
+        ), 
+    density: 0
+));
+
+@include mat.core-theme($theme);
+@include mat.all-component-themes($theme);

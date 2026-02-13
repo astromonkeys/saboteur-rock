@@ -1,0 +1,178 @@
+@use '@angular/material' as mat;
+
+// color definitions
+$background: #c3ab8b;
+
+// use Lexend font globally
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&display=swap");
+
+* {
+    font-family: 'Lexend', sans-serif;
+}
+
+html,
+body {
+    background: $background;
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+}
+
+.fade-in {
+    animation: fadein 3s;
+    -webkit-animation: fadein 3s;
+
+    @keyframes fadein {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @-webkit-keyframes fadein {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+}
+
+.shadow {
+    box-shadow: 0 4px 17px rgba(0, 0, 0, 0.20);
+}
+
+mat-mdc-table {
+    overflow: hidden !important;
+    border-radius: 3px;
+}
+
+result-card {
+    width: 85%;
+}
+
+.big-btn {
+    margin-top: 40px;
+    scale: 130%;
+}
+
+.breathing {
+    animation: breathing 6s ease-out infinite normal;
+    -webkit-animation: breathing 6s ease-out infinite normal;
+
+    @keyframes breathing {
+        0% {
+            -webkit-transform: scale(0.9);
+            -ms-transform: scale(0.9);
+            transform: scale(0.9);
+        }
+
+        50% {
+            -webkit-transform: scale(1);
+            -ms-transform: scale(1);
+            transform: scale(1);
+        }
+
+        100% {
+            -webkit-transform: scale(0.9);
+            -ms-transform: scale(0.9);
+            transform: scale(0.9);
+        }
+    }
+
+    @-webkit-keyframes breathing {
+        0% {
+            -webkit-transform: scale(0.9);
+            transform: scale(0.9);
+        }
+
+        50% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+
+        100% {
+            -webkit-transform: scale(0.9);
+            transform: scale(0.9);
+        }
+    }
+}
+
+@keyframes titleAnimation {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0;
+        -webkit-clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
+        clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
+    }
+
+    5% {
+        transform: translateY(0);
+        opacity: 1;
+        -webkit-clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 15%);
+        clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 15%);
+    }
+
+    80% {
+        transform: translateY(0);
+        opacity: 1;
+        -webkit-clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 15%);
+        clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 15%);
+    }
+
+    95% {
+        transform: translateY(0);
+        opacity: 1;
+        -webkit-clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 15%);
+        clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 15%);
+    }
+
+    100% {
+        transform: translateY(50px);
+        opacity: 0;
+        -webkit-clip-path: polygon(100% 0, 100% -0%, 0 100%, 0 100%);
+        clip-path: polygon(100% 0, 100% -0%, 0 100%, 0 100%);
+
+    }
+}
+
+.round-pause {
+    padding-top: 45vh;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    bottom: 0;
+    min-width: 100%;
+    color: rgb(61, 61, 61);
+
+    .inner-modal {
+        display: flex;
+        justify-content: center;
+        margin-left: 25%;
+        margin-right: 25%;
+    }
+}
+
+.grid-dropdown {
+    scale: 90%;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.link {
+    color: cornflowerblue;
+
+    &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}

@@ -1,0 +1,41 @@
+mat-radio-group {
+    display: flex;
+    margin-left: 20%;
+    text-align: left;
+    flex-direction: column;
+}
+
+mat-radio-button {
+    scale: 130%;
+    margin-bottom: 5px;
+}
+
+.container {
+    padding-top: 5%;
+    text-align: center;
+
+    .sub-container {
+        display: flex; align-items: center; justify-content: center;
+
+        h1 {
+            margin-bottom: 0px; margin-top: -10px;
+        }
+    }
+
+    .divider {
+        margin-top: 24px;
+    }
+
+    .animate-height {
+        &.hide {
+            max-height: 0;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        &.show {
+            max-height: 1000px;
+            transition: max-height 0.3s ease-in;
+        }
+    }
+}

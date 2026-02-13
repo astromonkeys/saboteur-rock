@@ -1,1 +1,0 @@
-export const Config = { whitelist: ['http://localhost:5173'] }

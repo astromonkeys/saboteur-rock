@@ -1,0 +1,28 @@
+.container {
+    justify-content: center;
+    display: flex;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+
+    >.mat-mdc-card {
+        width: 100%;
+
+        >.mat-mdc-card-content {
+            padding-top: 0;
+            margin-top: -5px;
+            padding-bottom: 10px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+    }
+
+    .accent-line {
+        background-color: rgb(195, 195, 195);
+        width: 20%;
+        height: 1px;
+        margin-left: 40%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+}

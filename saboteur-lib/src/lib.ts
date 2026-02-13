@@ -224,8 +224,8 @@ export enum ServerError {
 }
 
 export const DUMMY_PLAYER_NAME: string = 'nobody';
-export const DEFAULT_AVATAR_PATH: string = '/assets/icons/profile_empty.svg';
-export const DEAD_AVATAR_PATH: string = '/assets/icons/profile_dead.svg';
+export const DEFAULT_AVATAR_PATH: string = 'client/assets/icons/profile_empty.svg';
+export const DEAD_AVATAR_PATH: string = 'client/assets/icons/profile_dead.svg';
 
 // Holds all data to manage an active game. Copies are stored both in the UI and server, staying in sync via api calls/responses
 export class SaboteurRockGame {
