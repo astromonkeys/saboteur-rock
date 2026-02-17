@@ -17,7 +17,7 @@ import { VictoryComponent } from './component/victory/victory.component';
 import { ResultCardComponent } from './component/result-card/result-card.component';
 import { OptionsComponent } from './component/options/options.component';
 
-const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
+const config: SocketIoConfig = { url: 'http://10.0.0.248:8080', options: {} };
 
 @NgModule({
   declarations: [

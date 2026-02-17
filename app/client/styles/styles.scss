@@ -1,18 +1,20 @@
 @use '@angular/material' as mat;
 
-// color definitions
 $background: #c3ab8b;
+$background-img: url('../assets/sand.jpg');
 
 // use Lexend font globally
 @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap");
 
 * {
-    font-family: 'Lexend', sans-serif;
+    font-family: 'Chelsea Market', sans-serif;
 }
 
 html,
 body {
-    background: $background;
+    // background: $background;
+    background-image: $background-img;
     height: 100%;
     margin: 0;
     overflow-x: hidden;

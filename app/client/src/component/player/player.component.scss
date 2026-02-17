@@ -33,6 +33,7 @@
         h1 {
             margin: 0;
             text-align: center;
+            filter: drop-shadow(0 1px 2px #888);
         }
     }
 
@@ -40,7 +41,7 @@
         text-align: center;
 
         img {
-            filter: drop-shadow(0 0 4px #888);
+            filter: drop-shadow(0 0 8px #888);
             max-width: 100%;
             max-height: 100%;
             scale: 110%;
@@ -60,7 +61,7 @@
         }
 
         >.btn-spacer {
-            padding: 0 0 0 20vw;
+            padding: 0 0 0 17vw;
         }
 
         >.btn-right .mat-mdc-button-base {
@@ -131,7 +132,7 @@
         }
 
         >.btn-spacer {
-            padding: 0 0 0 20vw;
+            padding: 0 0 0 17vw;
         }
 
         >.btn-right .mat-mdc-button-base {
@@ -168,7 +169,7 @@
         }
 
         .btn-spacer {
-            padding: 0 0 0 20vw;
+            padding: 0 0 0 17vw;
         }
 
         .btn-right .mat-mdc-button-base {
