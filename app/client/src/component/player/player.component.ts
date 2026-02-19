@@ -2,14 +2,13 @@ import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/co
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../material/material.module';
 import { NgxImageCompressService } from 'ngx-image-compress';
-import { UIState, RoleName, Player, CustomPlayer, Role, DEFAULT_AVATAR_PATH } from 'saboteur-lib';
+import { UIState, RoleName, Player, CustomPlayer, DEFAULT_AVATAR_PATH } from 'saboteur-lib';
 import { BackendService } from '../../service/backend.service';
 import { StateService } from '../../service/state.service';
 import { ResultComponent } from '../result/result.component';
 import { VoteComponent } from '../vote/vote.component';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { VictoryComponent } from '../victory/victory.component';
-import { ResultCardComponent } from '../result-card/result-card.component';
 import { ResourceService } from '../../service/resource.service';
 import { DialogType, ToasterService } from '../../service/toaster.service';
 import { AudioService } from '../../service/audio.service';

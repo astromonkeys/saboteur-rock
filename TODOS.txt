@@ -2,6 +2,7 @@ This is an informal document just for Noah to remember what he's doing
 
 Current:
 - single script to build saboteur-lib and run backend & angular dev server
+- build argument for debug mode instead of boolean flag
 
 -- = fixed, needs testing
 *** = big ticket item to fix
