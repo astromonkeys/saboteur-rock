@@ -184,7 +184,7 @@ export class WikiDialog {
 @Component({
   selector: 'tip-dialog',
   template: `
-  <h1 mat-dialog-title style="font-family: 'Lexend', sans-serif; font-size: larger;"><b>{{backend.DEBUG_MODE ? backend.player.role.name + '(' + backend.player.name + ')' : backend.player.role.name }}</b></h1>
+  <h1 mat-dialog-title style="font-family: 'Lexend', sans-serif; font-size: larger;"><b>{{ backend.player.name + '(' + backend.player.role.name + ')' }}</b></h1>
   <h2 mat-dialog-title style="color: black; font-family: 'Lexend', sans-serif; margin-top: -20px;"><b>Allegiance: {{backend.player.role.team}}</b></h2>
   <mat-divider></mat-divider>
   <div mat-dialog-content>

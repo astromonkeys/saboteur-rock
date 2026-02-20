@@ -7,6 +7,18 @@
     padding-bottom: 3%;
     z-index: 2;
 
+    .option-tooltip {
+        strong {
+            margin-bottom: 0;
+        }
+
+        p {
+            font-size: x-small;
+            text-align: center;
+            margin-top: 0;
+        }
+    }
+
     strong {
         margin-bottom: 20px;
     }
@@ -15,6 +27,7 @@
         display: flex;
         width: 100%;
         justify-content: center;
+        align-items: center;
 
         strong {
             margin-top: 18px;

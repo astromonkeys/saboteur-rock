@@ -30,6 +30,7 @@ export class StateService {
   public voteState: VoteState = VoteState.BALLOT;
   public resultState: ResultState = ResultState.ABILITY;
   public marooningState: MarooningState = MarooningState.NORMAL;
+  public marooningActive: boolean = false; // is the marooning audio playing?
 
   private roundResults: VoteResults;
   public chartOptions: Partial<ChartOptions>;

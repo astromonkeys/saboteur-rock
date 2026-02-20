@@ -3,7 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { SocketIoModule } from 'ngx-socket-io';
+import { config } from './config';
 import { RootComponent } from './component/root/root.component';
 import { PlayerComponent } from './component/player/player.component';
 import { VoteComponent } from './component/vote/vote.component';
@@ -16,8 +17,6 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { VictoryComponent } from './component/victory/victory.component';
 import { ResultCardComponent } from './component/result-card/result-card.component';
 import { OptionsComponent } from './component/options/options.component';
-
-const config: SocketIoConfig = { url: 'http://10.0.0.245:8080', options: {} };
 
 @NgModule({
   declarations: [

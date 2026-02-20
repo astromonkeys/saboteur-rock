@@ -263,12 +263,12 @@ function onAddPlayer(socket: Socket, code: string, playerName: string, avatar: U
  * Updates game options
  * @param code game to update
  * @param options changes to apply
- * @param force should these changes happen immediately? ie, are we in pregame still? if not, the changes will be applied in the next round
  */
-function onUpdateOptions(code: string, options: GameOptions, force: boolean): void {
+function onUpdateOptions(code: string, options: GameOptions): void {
 	let game = getGameFromCode(code);
-	if (force) { game.options = options; }
+	if (game.state == GamePhase.PREGAME || game.state == GamePhase.MAROONING) { game.options = options; }
 	else { game.updatedOptions = options; } // delay applying changes until next round
+	emitToGame(code, ServerMsg.UPDATE_OPTIONS, game);
 }
 
 
@@ -378,8 +378,6 @@ function onRoundStart(code: string): void {
 	// delete timer just in case
 	clearInterval(timerMappings.get(game.code));
 	timerMappings.set(game.code, undefined);
-	// increase meeting length towards the end of the game
-	// if (game.players.length <= 4 && !DEBUG_MODE) { game.options.meetingDur *= 2; }
 	game.countdown = game.options.transitionDur;
 	game.state = GamePhase.TRANSITION;
 	doRoundTimer(code);
@@ -647,20 +645,17 @@ function getGameFromCode(code: string): SaboteurRockGame | undefined {
  * Generates a game code for a new game instance
  * @returns the new code
  */
-function generateGameCode(custom: boolean): string {
+function generateGameCode(): string {
 	let code = '';
-	if (randomInt(custom ? 2 : 5) != 0) { // 1 in 5 chance of selecting from word list. 1 in 2 for custom games
-		const gameCodeLength = 4;
-		const characters = 'ABCDEFGHJKLMNOPQRSTUVWXYZ';
-		const charactersLength = characters.length;
-		for (let counter = 0; counter < gameCodeLength; counter++) {
-			code += characters.charAt(Math.floor(Math.random() * charactersLength));
-		}
-	} else {
-		code = CODES[randomInt(CODES.length)]; // use pre-generated code
+	const gameCodeLength = 4;
+	const characters = 'ABCDEFGHJKLMNOPQRSTUVWXYZ';
+	const charactersLength = characters.length;
+	for (let counter = 0; counter < gameCodeLength; counter++) {
+		code += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
+	// code = CODES[randomInt(CODES.length)]; // use pre-generated code
 	if (checkIfGameExists(code)) {
-		return generateGameCode(custom);
+		return generateGameCode();
 	}
 	// base case
 	return code;
@@ -671,7 +666,7 @@ function generateGameCode(custom: boolean): string {
  * @returns the new game instance
  */
 function createGameInstance(custom: boolean): SaboteurRockGame {
-	let code = generateGameCode(custom);
+	let code = generateGameCode();
 	log(LogLevel.VERBOSE, code, 'Creating game ' + code);
 	let newGame = new SaboteurRockGame(code, custom);
 	activeGames.push(newGame);

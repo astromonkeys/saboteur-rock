@@ -38,7 +38,6 @@ export class PlayerComponent {
   showFileUploadError: boolean = false;
   cardFrontShowing: boolean = true;
   hideAllegiance: boolean = false;
-  marooningStarted: boolean = false;
 
   get isTurncoat(): boolean {
     return this.backend.player.role.name == RoleName.TURNCOAT;
@@ -64,7 +63,6 @@ export class PlayerComponent {
 
   ngAfterViewInit() {
     this.avatarSrc = this.res.emptyAvatar;
-    if (this.backend.DEBUG_MODE) { console.debug('Running app in debug mode.'); }
   }
 
   onCodeInput() {
@@ -116,7 +114,8 @@ export class PlayerComponent {
   }
 
   optionsCompleted(): boolean {
-    if (this.backend.DEBUG_MODE) { return true; }
+    return true;
+    //if (this.backend.DEBUG_MODE) { return true; }
     let rooms = [...this.backend.game.options.rooms].filter((room) => room != "");
     rooms.forEach((room) => room = room.toLowerCase());
 
@@ -184,11 +183,6 @@ export class PlayerComponent {
     let deliberation = this.backend.game.rounds[this.backend.game.roundIndex][this.backend.game.deliberationIndex];
     let meeting = deliberation.find((meeting) => meeting.playerOne.name == this.backend.player.name || meeting.playerTwo.name == this.backend.player.name);
     return meeting.room;
-  }
-
-  maroon(): void {
-    this.marooningStarted = true; 
-    this.backend.maroon(); 
   }
 
   flipCard(index: number = 0) {

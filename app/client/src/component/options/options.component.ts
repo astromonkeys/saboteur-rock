@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { BackendService } from '../../service/backend.service';
 import { ToasterService } from '../../service/toaster.service';
 import { StateService } from '../../service/state.service';
-import { GamePhase } from 'saboteur-lib';
+import { GameOptions, GamePhase } from 'saboteur-lib';
 
 @Component({
   selector: 'option-menu',
@@ -10,6 +10,8 @@ import { GamePhase } from 'saboteur-lib';
   styleUrls: ['./options.component.scss']
 })
 export class OptionsComponent {
+
+  changes: GameOptions;
 
   get pregame(): boolean { return this.backend.game.state == GamePhase.PREGAME; }
   get placeholderRooms(): string[] {
@@ -19,12 +21,10 @@ export class OptionsComponent {
   constructor(
     public backend: BackendService,
     public ss: StateService,
-    private toast: ToasterService
   ) { }
 
-  updateGameOptions(done: boolean = false) {
-    let snackbar: boolean = !this.backend.updateGameOptions(done);
-    if (snackbar && done) { this.toast.toast('Changes will be applied next round', 3500); }
+  ngOnInit() {
+    this.changes = Object.assign(this.backend.game.options);
   }
 
 }

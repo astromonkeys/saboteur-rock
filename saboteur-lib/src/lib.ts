@@ -49,11 +49,11 @@ export class GameOptions {
     rooms: string[] = ["", "", "", "", "", "", ""]; // default to 8 players/4 rooms - can add more if necessary
     requiredRooms: number = 1; // number of rooms required
     marooningScript: string = "Standard";
-    roundOneElimination: boolean = true;
+    roundOneElimination: boolean = false;
 }
 
 export const DEFAULT_MEETING_DURATION: number = 30; // meeting length, in seconds - default to 30
-export const DEFAULT_TRANSITION_DURATION: number = 30; // transition period length, in seconds - default to 30
+export const DEFAULT_TRANSITION_DURATION: number = 15; // transition period length, in seconds - default to 15
 
 export class Meeting {
 
@@ -198,6 +198,7 @@ export enum ServerMsg {
     ADD_PLAYER = "addPlayerResponse",
     PLAYER_JOIN = "playerJoinResponse",
     REMOVE_PLAYER = "removePlayerResponse",
+    UPDATE_OPTIONS = "updateOptionsResponse",
     ASSIGN_ROLES = "assignRolesResponse",
     BEGIN_MAROONING = "beginMarooningResponse",
     MAROONING_ABILITY = "marooningAbilityNotification",

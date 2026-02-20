@@ -4,7 +4,7 @@
   <button mat-icon-button [matMenuTriggerFor]="menu" class="icon-button">
     <mat-icon>info</mat-icon>
   </button>
-  <mat-menu #menu="matMenu">
+  <mat-menu #menu="matMenu" xPosition="after" yPosition="below">
     @if (backend.player?.isHost) {
     <button mat-menu-item (click)="ss.showOptions = true;">
       <mat-icon>settings</mat-icon>
@@ -288,8 +288,13 @@
   @if (ss.marooningState == types.MarooningState.NORMAL) {
   <div class="role-display">
     <div class="instructions">
-      <h3>Keep your eyes closed</h3>
-      <p>(Unless you are told to open them)</p>
+      @if (ss.marooningActive) {
+        <h3>Keep your eyes closed!</h3>
+        <p>(Unless you are told to open them)</p>
+      } @else {
+        <h3>Keep your identity hidden!</h3>
+        <p>(Tap the card to hide)</p>
+      }
     </div>
     <div class="card-container">
       <img #displayCard class="card-img" (click)="flipCard()" src="/client/assets/roles/{{backend.marooningDone ? backend.player.role.ability: backend.player.role.name}}.svg">
@@ -304,9 +309,9 @@
         }
       </mat-card-content>
     </mat-card>
-    @if (backend.player.isHost && !(marooningStarted && !backend.marooningDone)) {
+    @if (backend.player.isHost && !(ss.marooningActive && !backend.marooningDone)) {
     <div class="btn" style="scale: 130%; margin-top: 50px">
-      <button mat-raised-button (click)="maroon();" color="primary">Next</button>
+      <button mat-raised-button (click)="backend.maroon();" color="primary">Next</button>
     </div>
     }
   </div>
@@ -386,14 +391,14 @@
     <h1>Remaining players are deliberating</h1>
     <p>Feel free to go listen in - but remember to stay silent!</p>
     @if (backend.player.isHost) {
-    <button mat-raised-button style="scale: 125%; margin-top: 5px" (click)="this.backend.toggleCountdown()" color="primary">{{backend.game.doTimer ? 'Pause' : 'Resume'}}</button>
+    <button mat-raised-button style="scale: 125%; margin-top: 10vh" (click)="this.backend.toggleCountdown()" color="primary">{{backend.game.doTimer ? 'Pause' : 'Resume'}}</button>
     }
   </div>
   }
   @if (backend.game.state != types.GamePhase.PREVOTE && backend.game.state == types.GamePhase.TRANSITION && !backend.player.isDead) {
   <div class="meeting-container">
     <h1>Round {{backend.game.roundIndex + 1}}</h1>
-    <h4>Deliberation {{backend.game.deliberationIndex + 1}}</h4>
+    <h4>Deliberation {{backend.game.deliberationIndex + 1}} / {{backend.game.rounds[backend.game.roundIndex].length}}</h4>
     <h2> You are meeting with </h2>
     <app-avatar [name]="getMeetingPartner()" [vertical]="true"></app-avatar>
     <h2> in the {{getMeetingRoom()}} </h2>
@@ -402,7 +407,7 @@
   @if (backend.game.state != types.GamePhase.PREVOTE && backend.game.state == types.GamePhase.MEETING && !backend.player.isDead) {
   <div class="meeting-container">
     <h1>Round {{backend.game.roundIndex + 1}}</h1>
-    <h4>Deliberation {{backend.game.deliberationIndex + 1}}</h4>
+    <h4>Deliberation {{backend.game.deliberationIndex + 1}} / {{backend.game.rounds[backend.game.roundIndex].length}}</h4>
     <h2>Deliberate with {{getMeetingPartner()}}!</h2>
     <p style="margin-top: -10px;">(You should be in the {{getMeetingRoom()}})</p>
     <img src="/client/assets/icons/handshake-solid.svg">
@@ -417,17 +422,19 @@
     </div>
     }
     @if (backend.game.state == types.GamePhase.PREVOTE) {
-    <div class="prevote">
+    <div class="prevote" style="margin-top: 20vh;">
       <h1>Time to vote!</h1>
       <img src="/client/assets/icons/vote.svg" style="height: 100px;">
       <p>Please proceed to the voting pit - talking is&nbsp;<b>not</b>&nbsp;allowed!</p>
       @if (backend.player.isHost) {
-      <button mat-raised-button style="scale: 120%; margin-top: 10px" (click)="this.openVoting()" color="primary">Open Voting</button>
+        <div class="big-btn bottom-btn" style="margin-top: 25vh;">
+          <button mat-raised-button (click)="this.openVoting()" color="primary">Open Voting</button>
+        </div>
       }
     </div>
     }
     @if (backend.player.isHost && !backend.player.isDead && backend.game.state != types.GamePhase.PREVOTE) {
-    <button mat-raised-button style="scale: 125%; margin-top: 5px; z-index: 10;" (click)="this.backend.toggleCountdown()" color="primary">{{backend.game.doTimer ? 'Pause' : 'Resume'}}</button>
+    <button mat-raised-button style="scale: 125%; margin-top: 6vh; z-index: 10;" (click)="this.backend.toggleCountdown()" color="primary">{{backend.game.doTimer ? 'Pause' : 'Resume'}}</button>
     }
   </div>
 </div>

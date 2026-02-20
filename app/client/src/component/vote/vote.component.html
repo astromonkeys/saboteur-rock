@@ -11,6 +11,9 @@
     @if (ss.voteState == types.VoteState.BALLOT) {
     <div>
       <h1 style="margin-left: 5px; margin-right: 5px;">Round {{backend.game.roundIndex + 1}} Elimination Ballot</h1>
+      @if (backend.game.options.roundOneElimination && backend.game.roundIndex == 0) {
+        <p>For the first round, instead of eliminating a player their allegiance will be revealed.</p>
+      }
       @if(backend.player.role.ability == types.RoleName.MEDIC && backend.game.disableSos) {
         <p><mat-icon>info</mat-icon> Your SOS is blocked this round </p>
       }

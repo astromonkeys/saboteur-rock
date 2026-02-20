@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Haptics } from '@capacitor/haptics';
 import { Socket } from 'ngx-socket-io';
-import { ServerRequest, ServerMsg, UIState, GamePhase, VoteState, Player, SaboteurRockGame, Vote, ResultState, MarooningState, RoleName, PlayerImg, ServerError, CustomPlayer } from 'saboteur-lib';
+import { ServerRequest, ServerMsg, UIState, GamePhase, VoteState, Player, SaboteurRockGame, Vote, ResultState, MarooningState, RoleName, PlayerImg, ServerError, CustomPlayer, GameOptions } from 'saboteur-lib';
 import { AudioService } from './audio.service';
 import { ResourceService } from './resource.service';
 import { StateService } from './state.service';
@@ -12,7 +12,7 @@ import { ToasterService } from './toaster.service';
 })
 export class BackendService {
 
-  readonly DEBUG_MODE: boolean = true; // flip to false in release branches/playtests
+  readonly DEBUG_MODE: boolean = false; // flip to false in release branches/playtests
 
   enteredGameCode: string;
   enteredPlayerName: string;
@@ -151,8 +151,17 @@ export class BackendService {
       this.ss.uiState = UIState.MAROONING;
     });
 
+    this.socket.on(ServerMsg.UPDATE_OPTIONS, (game: SaboteurRockGame) => {
+      if (!(JSON.stringify(this.game.options) === JSON.stringify(game.options))) {
+        if (this.game.state != GamePhase.PREGAME && this.game.state != GamePhase.MAROONING) { this.toast.toast('Settings will be applied next round', 3500); }
+      } else {
+        this.game = game;
+      }
+    })
+
     this.socket.on(ServerMsg.BEGIN_MAROONING, () => {
       this.ss.marooningState = MarooningState.NORMAL;
+      this.ss.marooningActive = true;
       if (this.playAudio) {
         this.audio.stopMusic();
         this.audio.beginMarooning(() => { this.endMarooning(); });
@@ -169,6 +178,7 @@ export class BackendService {
     });
 
     this.socket.on(ServerMsg.END_MAROONING, () => {
+      this.ss.marooningActive = false;
       this.marooningDone = true;
       this.ss.marooningState = MarooningState.NORMAL;
     })
@@ -336,14 +346,11 @@ export class BackendService {
 
   startGame() { this.socket.emit(ServerRequest.GAME_START, this.game.code); }
 
-  updateGameOptions(done: boolean): boolean {
-    let force = this.game.state == GamePhase.PREGAME;
-    if (done) { this.ss.showOptions = false; }
-    else {
-      this.game.options.rooms = this.game.options.rooms.filter((room) => room != ""); // delete unused entries
-      this.socket.emit(ServerRequest.UPDATE_OPTIONS, this.game.code, this.game.options, force);
-    }
-    return force;
+  updateGameOptions(changes: GameOptions) {
+    this.ss.showOptions = false;
+    // Show changes in UI, but they won't be applied in the game logic until appropriate
+    this.game.options = changes;
+    this.socket.emit(ServerRequest.UPDATE_OPTIONS, this.game.code, changes);
   }
 
   generateGameInstance() {

@@ -1,7 +1,7 @@
 {
     "Standard": {
         "name": "Standard",
-        "audioSrc": "/assets/marooning/marooning-standard.wav",
+        "audioSrc": "/client/assets/marooning/marooning-standard.wav",
         "ghostStart": "17500",
         "ghostEnd": "10000",
         "detectiveStart": "2000",
@@ -9,7 +9,7 @@
     },
     "Theatrical": {
         "name": "Theatrical",
-        "audioSrc": "/assets/marooning/marooning-theatrical.mp3",
+        "audioSrc": "/client/assets/marooning/marooning-theatrical.mp3",
         "ghostStart": "65000",
         "ghostEnd": "23000",
         "detectiveStart": "3000",
