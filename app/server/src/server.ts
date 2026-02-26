@@ -47,16 +47,16 @@ function subscribeToBackendRequests(socket: Socket): void {
 	socket.on(ServerRequest.DISPLAY_JOIN, (code: string) => { joinAsDisplay(socket, code); });
 	socket.on(ServerRequest.ADD_PLAYER, (code: string, playerName: string, avatar: Uint8Array) => { onAddPlayer(socket, code, playerName, avatar); });
 	socket.on(ServerRequest.PLAYER_LEAVE, (code: string, name: string) => { onPlayerDisconnect(socket, name ? "host kicking them out" : "leaving via button", code, name); });
-	socket.on(ServerRequest.UPDATE_OPTIONS, (code: string, options: GameOptions, force: boolean) => { onUpdateOptions(code, options); });
+	socket.on(ServerRequest.UPDATE_OPTIONS, (code: string, options: GameOptions) => { onUpdateOptions(code, options); });
 	socket.on(ServerRequest.GAME_START, (code: string) => { onGameStart(code); });
 	socket.on(ServerRequest.BEGIN_MAROONING, (code: string) => { onMarooningStart(code); });
 	socket.on(ServerRequest.END_MAROONING, (code: string) => { emitToGame(code, ServerMsg.END_MAROONING); });
 	socket.on(ServerRequest.GEN_ROUND, (code: string) => { onGenerateRound(code); });
 	socket.on(ServerRequest.ROUND_START, (code: string) => { onRoundStart(code) });
 	socket.on(ServerRequest.TIMER_TOGGLE, (code: string) => { onTimerToggle(code); });
-	socket.on(ServerRequest.SEND_TO_VOTING, (code: string, disconnected: number) => { sendToVoting(code, disconnected); });
+	socket.on(ServerRequest.SEND_TO_VOTING, (code: string) => { sendToVoting(code); });
 	socket.on(ServerRequest.CAST_VOTE, (code: string, vote: Vote) => { onCastVote(code, vote); });
-	socket.on(ServerRequest.CLOSE_VOTING, (code: string, disconnected: number) => { closeVoting(code, disconnected); })
+	socket.on(ServerRequest.CLOSE_VOTING, (code: string) => { closeVoting(code); })
 	socket.on(ServerRequest.SEND_TO_TIEBREAK, (code: string) => { sendToTiebreak(code); });
 	socket.on(ServerRequest.TIEBREAK_VOTE, (code: string, owner: Player, target: Player) => { onTiebreakVote(code, owner, target); });
 	socket.on(ServerRequest.VICTORY, (code: string) => { processVictory(code); });
@@ -93,17 +93,18 @@ function onPlayerDisconnect(socket: Socket, reason: string, code: string = null,
 			console.log('deleting image for', player.name);
 			deletePlayerImg(game.code, player.name);
 		} else if (!game.custom || game.state != GamePhase.PREGAME) { // for custom games, allow players to redo their selection in pregame
+			// TODO: notify host when a player disconnects
 			game.disconnected.push(player);
+			// TODO: pause marooning audio/timers
 		}
-		let newHost = null;
-		if (player.isHost) {
-			// reassign host duties
-			game.players[0].isHost = true;
-			newHost = game.players[0];
-		}
+
+		// Avoid reassigning host duties automatically if the host disconnects - we assume they'll either:
+		// 1. Rejoin
+		// 2. Before leaving, reassign host duties manually via admin actions - TODO: allow this
+
 		// don't need to notify when the display player leaves
 		if (!player.isDisplay) {
-			emitToGame(game.code, ServerMsg.REMOVE_PLAYER, game, player, newHost);
+			emitToGame(game.code, ServerMsg.REMOVE_PLAYER, game, player);
 		}
 		// find the kicked player's socket and disconnect that one instead of the socket that made the request
 		if (name) {
@@ -313,25 +314,26 @@ function onAssignRoles(code: string): void {
  */
 function onMarooningStart(code: string): void {
 	let game = getGameFromCode(code);
+	game.disconnected = [];
 	let marooningAudio: MarooningAudio = MAROONING_AUDIO[game.options.marooningScript];
 	emitToGame(code, ServerMsg.BEGIN_MAROONING);
 
 	let ghostStart = setTimeout(() => {
 		// emit to ghost to show cards
 		emitToGame(code, ServerMsg.MAROONING_ABILITY, RoleName.GHOST, true);
-		clearInterval(timerMappings.get(game.code));
+		clearTimeout(timerMappings.get(game.code));
 		let ghostEnd = setTimeout(() => {
 			// emit to ghost to hide cards
 			emitToGame(code, ServerMsg.MAROONING_ABILITY, RoleName.GHOST, false);
-			clearInterval(timerMappings.get(game.code));
+			clearTimeout(timerMappings.get(game.code));
 			let detectiveStart = setTimeout(() => {
 				// emit to detective to show cards
 				emitToGame(code, ServerMsg.MAROONING_ABILITY, RoleName.DETECTIVE, true);
-				clearInterval(timerMappings.get(game.code));
+				clearTimeout(timerMappings.get(game.code));
 				let detectiveEnd = setTimeout(() => {
 					// emit to detective to hide cards
 					emitToGame(code, ServerMsg.MAROONING_ABILITY, RoleName.DETECTIVE, false);
-					clearInterval(timerMappings.get(game.code));
+					clearTimeout(timerMappings.get(game.code));
 					timerMappings.set(game.code, undefined);
 				}, marooningAudio.detectiveEnd);
 				timerMappings.set(game.code, detectiveEnd);
@@ -349,6 +351,7 @@ function onMarooningStart(code: string): void {
  */
 function onGenerateRound(code: string): void {
 	let game = getGameFromCode(code);
+	game.disconnected = [];
 	// process vote results (if applicable) before generating another round
 	if (!game.voteResults[game.roundIndex]?.veto && (game.roundIndex > 0 || (game.roundIndex == 0 && game.options.roundOneElimination))) {
 		doPlayerElimination(false, game);
@@ -436,13 +439,12 @@ function onTimerToggle(code: string): void {
 /**
  * Opens voting, booting disconnected players out if there are any, as they are assumed to have left completely
  * @param code game code
- * @param disconnected list of disconnected players
  */
-function sendToVoting(code: string, disconnected: number): void {
+function sendToVoting(code: string): void {
 	let game = getGameFromCode(code);
+	game.disconnected = [];
 	game.votable = [...game.players].filter((player) => player.socketID != -1);
 	game.state = GamePhase.VOTE;
-	if (disconnected == 0) { game.disconnected = []; }
 	emitToGame(code, ServerMsg.SEND_TO_VOTING, game);
 }
 
@@ -458,7 +460,7 @@ function onCastVote(code: string, vote: Vote): void {
 	game.voted.push(vote.owner);
 	// check if this vote was the last one. if so, notify players voting is complete
 	if (game.voted.length == game.votable.length) {
-		closeVoting(code, game.disconnected.length);
+		closeVoting(code);
 	} else { // if not, send the updated vote count (only the display player uses this)
 		emitToGame(code, ServerMsg.VOTE_CT, game);
 	}
@@ -469,9 +471,8 @@ function onCastVote(code: string, vote: Vote): void {
  * @param code game code
  * @param disconnected list of disconnected players
  */
-function closeVoting(code: string, disconnected: number): void {
+function closeVoting(code: string): void {
 	let game = getGameFromCode(code);
-	if (disconnected == 0) { game.disconnected = []; }
 
 	processVotingResults(game);
 

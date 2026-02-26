@@ -232,8 +232,11 @@ export class PlayerComponent {
   }
 
   openVoting() {
-    if (this.backend.game.disconnected.length > 0) { this.toast.dialog(DialogType.OpenVoteDialog) }
-    else { this.backend.openVoting(); }
+    if (this.backend.game.disconnected.length > 0) {
+      let confirm = this.toast.dialog(DialogType.DisconnectedDialog, { bodyText: 'Are you sure you want to continue to voting?' });
+      if (!confirm) { return; }
+    }
+    this.backend.openVoting();
   }
 
   adminDialog() {

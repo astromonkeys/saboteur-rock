@@ -3,18 +3,25 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BackendService } from './backend.service';
 import { MaterialModule } from '../material/material.module';
-import { Player, RoleName, RoleTeamMap, Team, TeamMetrics } from 'saboteur-lib';
+import { DUMMY_PLAYER_NAME, Player, RoleName, RoleTeamMap, Team, TeamMetrics } from 'saboteur-lib';
 import { ResourceService } from './resource.service';
 import { TypeService } from './type.service';
 import { StateService } from './state.service';
 
 export enum DialogType {
   AdminDialog,
+  ReconnectDialog,
   LeaveGameDialog,
-  OpenVoteDialog,
+  DisconnectedDialog,
   CloseVoteDialog,
   TipDialog,
   Wiki
+}
+
+export interface DialogArgs {
+  code?: string;
+  name?: string;
+  bodyText?: string;
 }
 
 @Injectable({
@@ -22,31 +29,23 @@ export enum DialogType {
 })
 export class ToasterService {
 
+  public dialogArgs: DialogArgs;
+
   constructor(
     private matDialog: MatDialog,
     private snackbar: MatSnackBar
   ) { }
 
-  dialog(type: DialogType): void {
+  dialog(type: DialogType, args?: DialogArgs): any {
+    this.dialogArgs = args;
     switch (type) {
-      case DialogType.AdminDialog:
-        this.matDialog.open(AdminDialog, {});
-        break;
-      case DialogType.LeaveGameDialog:
-        this.matDialog.open(LeaveGameDialog, {});
-        break;
-      case DialogType.OpenVoteDialog:
-        this.matDialog.open(OpenVoteDialog, {});
-        break;
-      case DialogType.CloseVoteDialog:
-        this.matDialog.open(CloseVoteDialog, {});
-        break;
-      case DialogType.TipDialog:
-        this.matDialog.open(TipDialog, {});
-        break;
-      case DialogType.Wiki:
-        this.matDialog.open(WikiDialog, {});
-        break;
+      case DialogType.AdminDialog: return this.matDialog.open(AdminDialog, {});
+      case DialogType.ReconnectDialog: return this.matDialog.open(ReconnectDialog, { disableClose: true });
+      case DialogType.LeaveGameDialog: return this.matDialog.open(LeaveGameDialog, {});
+      case DialogType.DisconnectedDialog: return this.matDialog.open(DisconnectedDialog, {});
+      case DialogType.CloseVoteDialog: return this.matDialog.open(CloseVoteDialog, {});
+      case DialogType.TipDialog: return this.matDialog.open(TipDialog, {});
+      case DialogType.Wiki: return this.matDialog.open(WikiDialog, {});
       default:
         break;
     }
@@ -90,45 +89,47 @@ export class LeaveGameDialog {
 }
 
 @Component({
-  selector: 'open-vote-dialog',
+  selector: 'disconnected-dialog',
   template: `
   <div mat-dialog-content>
-    <p style="color: black;">{{msg}}</p>
+    <p style="color: black;">{{this.backend.game.disconnected.length > 1 ? 'There are disconnected players:' : 'There is a disconnected player:'}}</p>
     @for (player of backend.game.disconnected; track player.name) {
       <p>{{player.name}}</p>
     }
-    <p style="color: black;">Are you sure you want to continue to voting?</p>
+    <p style="color: black;">{{toast.dialogArgs.bodyText}}</p>
+    <p style="color: black;">Any disconnected players won't be able to reconnect.</p>
   </div>
   <div mat-dialog-actions align="center">
     <button mat-stroked-button (click)="onNoClick()"> No </button>
-    <button mat-stroked-button (click)="backend.openVoting()" [mat-dialog-close]="yes" cdkFocusInitial color="warn"> Yes </button>
+    <button mat-stroked-button (click)="onYesClick()" [mat-dialog-close]="yes" cdkFocusInitial color="warn"> Yes </button>
   </div>
   `,
   standalone: true,
   imports: [MaterialModule],
 })
-export class OpenVoteDialog {
+export class DisconnectedDialog {
 
   yes: string = "yes";
 
   constructor(
     public backend: BackendService,
-    public dialogRef: MatDialogRef<OpenVoteDialog>,
+    public toast: ToasterService,
+    public dialogRef: MatDialogRef<DisconnectedDialog>,
   ) { }
 
-  get msg(): string {
-    return this.backend.game.disconnected.length > 1 ? `There are disconnected players:` : `There is a disconnected player:`;
+  onNoClick(): void {
+    this.dialogRef.close(false);
   }
 
-  onNoClick(): void {
-    this.dialogRef.close('no');
+  onYesClick(): void {
+    this.dialogRef.close(true);
   }
 }
 
 @Component({
   selector: 'wiki-dialog',
   template: `
-  <h2 mat-dialog-title style="font-family: 'Lexend', sans-serif; font-size: larger;"><b>Game Reference</b></h2>
+  <h2 mat-dialog-title style="font-size: larger;"><b>Game Reference</b></h2>
   <mat-divider></mat-divider>
   <div mat-dialog-content>
     @if (metrics) {
@@ -164,7 +165,7 @@ export class WikiDialog {
   constructor(
     public backend: BackendService,
     public res: ResourceService,
-    public dialogRef: MatDialogRef<OpenVoteDialog>,
+    public dialogRef: MatDialogRef<WikiDialog>,
   ) { }
 
   getRoleColor(role: RoleName): string {
@@ -184,8 +185,8 @@ export class WikiDialog {
 @Component({
   selector: 'tip-dialog',
   template: `
-  <h1 mat-dialog-title style="font-family: 'Lexend', sans-serif; font-size: larger;"><b>{{ backend.player.name + '(' + backend.player.role.name + ')' }}</b></h1>
-  <h2 mat-dialog-title style="color: black; font-family: 'Lexend', sans-serif; margin-top: -20px;"><b>Allegiance: {{backend.player.role.team}}</b></h2>
+  <h1 mat-dialog-title style="font-size: larger;"><b>{{ backend.player.name + '(' + backend.player.role.name + ')' }}</b></h1>
+  <h2 mat-dialog-title style="color: black; margin-top: -20px;"><b>Allegiance: {{backend.player.role.team}}</b></h2>
   <mat-divider></mat-divider>
   <div mat-dialog-content>
     <p style="color: black;">{{backend.player.role.card}}</p>
@@ -331,7 +332,7 @@ export class AdminDialog {
   restartRequested: boolean = false;
 
   get nonHosts(): Player[] {
-    return this.backend.game?.players?.filter((player) => { return player.isHost == false });
+    return this.backend.game?.players?.filter((player) => { return player.isHost == false && player.name != DUMMY_PLAYER_NAME });
   }
 
   constructor(
@@ -351,4 +352,39 @@ export class AdminDialog {
   onNoClick(): void {
     this.dialogRef.close("no");
   }
+}
+
+@Component({
+  selector: 'reconnect-dialog',
+  template: `
+  <div mat-dialog-content align="center">
+     <p style="color: black;">Ongoing game with code&nbsp;<strong>{{toast.dialogArgs.code}}</strong>&nbsp;found. Rejoin as&nbsp;<strong>{{toast.dialogArgs.name}}</strong>&nbsp;?</p>
+  </div>
+  <div mat-dialog-actions align="center">
+    <button mat-raised-button (click)="reconnect()" color="primary"> Join </button>
+    <button mat-stroked-button (click)="leave()"> Leave </button>
+  </div>
+  `,
+  standalone: true,
+  imports: [MaterialModule]
+})
+export class ReconnectDialog {
+
+  constructor(
+    public backend: BackendService,
+    public toast: ToasterService,
+    public dialogRef: MatDialogRef<AdminDialog>,
+  ) { }
+
+  reconnect() {
+    this.dialogRef.close();
+    this.backend.joinExistingGame(this.toast.dialogArgs.code, this.toast.dialogArgs.name, null);
+  }
+
+  leave() {
+    this.dialogRef.close();
+    localStorage.clear();
+    this.backend.reset();
+  }
+
 }

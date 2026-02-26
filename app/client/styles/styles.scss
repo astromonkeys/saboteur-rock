@@ -3,8 +3,7 @@
 $background: #c3ab8b;
 $background-img: url('../assets/sand.jpg');
 
-// use Lexend font globally
-@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&display=swap");
+// Use Chelsea Market font globally
 @import url("https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap");
 
 * {
@@ -43,6 +42,17 @@ body {
         to {
             opacity: 1;
         }
+    }
+}
+
+.logo {
+    text-align: center;
+
+    img {
+        filter: drop-shadow(0 0 8px #888);
+        max-width: 100%;
+        max-height: 100%;
+        scale: 110%;
     }
 }
 

@@ -5,7 +5,7 @@ import { ServerRequest, ServerMsg, UIState, GamePhase, VoteState, Player, Sabote
 import { AudioService } from './audio.service';
 import { ResourceService } from './resource.service';
 import { StateService } from './state.service';
-import { ToasterService } from './toaster.service';
+import { DialogType, ToasterService } from './toaster.service';
 
 @Injectable({
   providedIn: 'root'
@@ -78,6 +78,8 @@ export class BackendService {
       }
       else { setTimeout(() => { this.showLoadingModal = false; }, 500); }
       switch (this.game.state) {
+        // in most cases, we'll go into this block
+        // other blocks are in case the player disconnects/rejoins during the game
         case GamePhase.PREGAME:
           if (this.game.custom && !this.player.role && !this.player.isDisplay) {
             this.ss.uiState = UIState.CUSTOM_SESSION;
@@ -284,8 +286,8 @@ export class BackendService {
       // check if game still exists before attempting to rejoin. callback yields an immediate response
       this.socket.emit(ServerRequest.GAME_EXISTS, code, (exists: boolean) => {
         if (exists) {
-          // TODO: prompt player to rejoin with modal
-          this.joinExistingGame(code, name, null);
+          // prompt player to rejoin with modal
+          this.toast.dialog(DialogType.ReconnectDialog, { code: code, name: name });
         } else {
           // if a code was found but the game no longer exists, reset
           localStorage.clear();
@@ -314,23 +316,23 @@ export class BackendService {
 
   sendToTiebreaker() { this.socket.emit(ServerRequest.SEND_TO_TIEBREAK, this.game.code); }
 
-  closeVoting() {
-    this.game.disconnected = [];
-    this.socket.emit(ServerRequest.CLOSE_VOTING, this.game.code, 0);
-  }
+  closeVoting() { this.socket.emit(ServerRequest.CLOSE_VOTING, this.game.code); }
 
   castVote(vote: Vote) { this.socket.emit(ServerRequest.CAST_VOTE, this.game.code, vote); }
 
-  openVoting() {
-    this.game.disconnected = [];
-    this.socket.emit(ServerRequest.SEND_TO_VOTING, this.game.code, 0);
-  }
+  openVoting() { this.socket.emit(ServerRequest.SEND_TO_VOTING, this.game.code); }
 
   toggleCountdown() { this.socket.emit(ServerRequest.TIMER_TOGGLE, this.game.code); }
 
   startRound() { this.socket.emit(ServerRequest.ROUND_START, this.game.code); }
 
-  generateRound() { this.socket.emit(ServerRequest.GEN_ROUND, this.game.code); }
+  generateRound() { 
+    if (this.game.disconnected.length > 0) {
+      let confirm = this.toast.dialog(DialogType.DisconnectedDialog, { bodyText: 'Are you sure you want to begin the round?' });
+      if (!confirm) { return; }
+    }
+    this.socket.emit(ServerRequest.GEN_ROUND, this.game.code); 
+  }
 
   endMarooning() {
     this.audio.endMarooning(() => { this.endMarooning(); });
@@ -339,6 +341,10 @@ export class BackendService {
 
   maroon() {
     if (!this.marooningDone) {
+      if (this.game.disconnected.length > 0) {
+        let confirm = this.toast.dialog(DialogType.DisconnectedDialog, { bodyText: 'Are you sure you want to begin the marooning?' });
+        if (!confirm) { return; }
+      }
       this.socket.emit(ServerRequest.BEGIN_MAROONING, this.game.code);
     } else {
       this.generateRound();
@@ -391,6 +397,7 @@ export class BackendService {
     this.showLoadingModal = false;
     this.marooningDone = false;
     this.audio.reset();
+    // TODO: do we need to cleanup things on the backend?
   }
 
 }
