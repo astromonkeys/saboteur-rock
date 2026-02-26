@@ -18,7 +18,7 @@ const io = new Server(createServer(app), {
 	pingTimeout: 60000 // 10 minutes
 });
 
-const activeGames: SaboteurRockGame[] = []; // keeps track of active game instances
+const activeGames: Map<string, SaboteurRockGame> = new Map<string, SaboteurRockGame>(); // keeps track of active game instances
 const timerMappings: Map<string, NodeJS.Timeout> = new Map<string, NodeJS.Timeout>(); // maps a game code to the timer associated with that game
 const avatarMappings: Map<string, PlayerImg[]> = new Map<string, PlayerImg[]>(); // TODO: at some point, we'll have too many images to store in memory with tons of games going on
 
@@ -47,7 +47,7 @@ function subscribeToBackendRequests(socket: Socket): void {
 	socket.on(ServerRequest.DISPLAY_JOIN, (code: string) => { joinAsDisplay(socket, code); });
 	socket.on(ServerRequest.ADD_PLAYER, (code: string, playerName: string, avatar: Uint8Array) => { onAddPlayer(socket, code, playerName, avatar); });
 	socket.on(ServerRequest.PLAYER_LEAVE, (code: string, name: string) => { onPlayerDisconnect(socket, name ? "host kicking them out" : "leaving via button", code, name); });
-	socket.on(ServerRequest.UPDATE_OPTIONS, (code: string, options: GameOptions, force: boolean) => { onUpdateOptions(code, options, force); });
+	socket.on(ServerRequest.UPDATE_OPTIONS, (code: string, options: GameOptions, force: boolean) => { onUpdateOptions(code, options); });
 	socket.on(ServerRequest.GAME_START, (code: string) => { onGameStart(code); });
 	socket.on(ServerRequest.BEGIN_MAROONING, (code: string) => { onMarooningStart(code); });
 	socket.on(ServerRequest.END_MAROONING, (code: string) => { emitToGame(code, ServerMsg.END_MAROONING); });
@@ -75,8 +75,9 @@ function subscribeToBackendRequests(socket: Socket): void {
 function onPlayerDisconnect(socket: Socket, reason: string, code: string = null, name: string = null): void {
 	log(LogLevel.DEBUG, code, `Player with ID ${socket.data.id} disconnected because of ${reason}`);
 	let game: SaboteurRockGame;
-	if (code) { game = activeGames.find((game) => game.code == code); }
-	else { game = activeGames.find((game) => game.players.concat(game.displays).find((player) => player.socketID == socket.data.id)); }
+	if (code) { game = getGameFromCode(code); }
+	// TODO: is there a faster way to find the game from the player without the game code?
+	else { game = Array.from(activeGames.values()).find((game) => game.players.concat(game.displays).find((player) => player.socketID == socket.data.id)); }
 
 	if (!game) { return; } // nothing to do
 
@@ -138,13 +139,7 @@ function onCreateGame(socket: Socket, playerName: string, avatar: Uint8Array, cu
  * @returns if game exists
  */
 function checkIfGameExists(code: string): boolean {
-	let exists = false;
-	activeGames.forEach(game => {
-		if (game.code == code) {
-			exists = true;
-		}
-	});
-	return exists;
+	return activeGames.get(code) !== undefined;
 }
 
 /**
@@ -599,9 +594,8 @@ function cleanupPlayerImgs(code: string): void {
 function cleanupGame(code: string): void {
 	log(LogLevel.VERBOSE, code, 'Cleaning up game', code, '...');
 	cleanupPlayerImgs(code);
-	let index = activeGames.indexOf(activeGames.find((game) => { return game.code == code; }));
-	if (index > -1) { activeGames.splice(index, 1); }
-	log(LogLevel.VERBOSE, code, 'Done cleaning up game. Active games:', activeGames.length);
+	activeGames.delete(code);
+	log(LogLevel.VERBOSE, code, 'Done cleaning up game. Active games:', activeGames.size);
 }
 
 /**
@@ -638,7 +632,7 @@ function emitToGame(code: string, responseType: ServerMsg, ...args: any[]): void
  * @returns the found game instance, or undefined if not found
  */
 function getGameFromCode(code: string): SaboteurRockGame | undefined {
-	return activeGames.find((game) => game.code == code);
+	return activeGames.get(code);
 }
 
 /**
@@ -669,6 +663,6 @@ function createGameInstance(custom: boolean): SaboteurRockGame {
 	let code = generateGameCode();
 	log(LogLevel.VERBOSE, code, 'Creating game ' + code);
 	let newGame = new SaboteurRockGame(code, custom);
-	activeGames.push(newGame);
+	activeGames.set(code, newGame);
 	return newGame;
 }

@@ -284,6 +284,7 @@ export class BackendService {
       // check if game still exists before attempting to rejoin. callback yields an immediate response
       this.socket.emit(ServerRequest.GAME_EXISTS, code, (exists: boolean) => {
         if (exists) {
+          // TODO: prompt player to rejoin with modal
           this.joinExistingGame(code, name, null);
         } else {
           // if a code was found but the game no longer exists, reset
