@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SocketIoModule } from 'ngx-socket-io';
-import { config } from './config';
+import { Config } from './config';
 import { RootComponent } from './component/root/root.component';
 import { PlayerComponent } from './component/player/player.component';
 import { VoteComponent } from './component/vote/vote.component';
@@ -29,7 +29,7 @@ import { OptionsComponent } from './component/options/options.component';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    SocketIoModule.forRoot(config),
+    SocketIoModule.forRoot(Config),
     NgApexchartsModule,
     PlayerComponent,
     VoteComponent,
