@@ -1,35 +1,10 @@
 This is an informal document just for Noah to remember what he's doing
 
 Current:
+- when start game button is disabled, if clicked show a tooltip as to why (# of players not reached, rooms not named, etc.)
+- result screen could definitely use sprucing up - make use of the icons Zach made
+- Display UI is generally garbage and should be much better
+
+Backlog:
 - single script to build saboteur-lib and run backend & angular dev server
-- build argument for debug mode instead of boolean flag
-
--- = fixed, needs testing
-*** = big ticket item to fix
-
---make top banner smaller on display or scale down lobby so everything fits on a laptop
---other ui element for "have you used x ability"
---allow medic to say who they saved most recently in custom game
---display player didn't stop playing lobby music
-***tables in display component really squished -> make it fit 1730x800(roughly)
-	***finish restyling
---add trackby function in vote component
---close vote list incorrect in a tiebreaker
-	--do show the list of who hasn't voted
-	if not all votes are counted, completely restart the tiebreaker regardless if saboteur voted or not. Host can manually kick problematic players if necessary
---(not really sure how to investigate unless it happens again)players on other devices lost avatars 
---round summary screen is broken for dead users
---dead players should not be able to see luca's tip
---bold who WOULD HAVE BEEN
---change allegiance remains mystery(past round one mock) to jared survives this round
---if medic's sos is blocked, show something saying that they lose a turn on it
---executioner wasn't able to use their execution ability
---update deliberation counts
---placeholder room names are clue rooms like ballroom, library
---if turncoat changes sides at the end of the game, they should be shown as such
---ios users are able to refresh with overscroll behavior in chrome only
-(maybe fixed?)***investigate roles being properly assigned in a custom game
-    professor-saboteur not correct
---if player disconnects, audio service doesn't work on reconnect
---keep marooning UIs mostly static, condense
---ability selections can be skipped, make them choose one
+- build argument or custom route for debug mode instead of boolean flag

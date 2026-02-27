@@ -1,4 +1,5 @@
 <div class="container">
+  <h1 style="text-align: center; margin-top: 0;">Game Options</h1>
   <mat-grid-list cols="2" rowHeight="70px">
     <mat-grid-tile>
       <strong>Meeting Length</strong>
@@ -67,7 +68,49 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  @for (room of [].constructor(pregame ? 7 : changes.requiredRooms); track room; let i = $index) {
+  <h2 style="text-align: center; margin: 0;">Rooms</h2>
+  <p style="margin: 0; text-align: center; font-size: small;">(your space may look different than the shipwreck)</p>
+  <div class="room-select">
+    <canvas #canvas></canvas>
+    <img src="/client/assets/img/room-select.png"/>
+    <button (click)="in1.focus()" style="top: 32px; width: 100px; height: 100px; left: 45px;"></button>
+    <mat-form-field style="right: 0px; top: 28px;">
+      <mat-label>Room 1</mat-label>
+      <input #in1 matInput maxlength="15" [ngModel]="changes.rooms[0]" (ngModelChange)="changes.rooms[0] = $event;" placeholder="Bow"/>
+    </mat-form-field>
+    <button (click)="in2.focus()" style="top: 138px; width: 80px; height: 80px; right: 232px;"></button>
+    <mat-form-field style="right: -10px; top: 120px;">
+      <mat-label>Room 2</mat-label>
+      <input #in2 matInput maxlength="15" [ngModel]="changes.rooms[1]" (ngModelChange)="changes.rooms[1] = $event;" placeholder="Cargo Hold"/>
+    </mat-form-field>
+    <button (click)="in3.focus()" tyle="top: 148px; width: 60px; height: 70px; left: 22px;"></button>
+    <mat-form-field style="right: -10px; top: 190px;">
+      <mat-label>Room 3</mat-label>
+      <input #in3 matInput maxlength="15" [ngModel]="changes.rooms[2]" (ngModelChange)="changes.rooms[2] = $event;" placeholder="Closet"/>
+    </mat-form-field>
+    <button (click)="in4.focus()" style="top: 220px; width: 170px; height: 160px; left: 13px;"></button>
+    <mat-form-field style="right: 0px; top: 270px;">
+      <mat-label>Room 4</mat-label>
+      <input #in4 matInput maxlength="15" [ngModel]="changes.rooms[3]" (ngModelChange)="changes.rooms[3] = $event;" placeholder="Deck"/>
+    </mat-form-field>
+    <button (click)="in5.focus()" style="top: 384px; width: 90px; height: 105px; right: 220px;"></button>
+    <mat-form-field style="right: 0px; top: 350px;">
+      <mat-label>Room 5 (9+ players)</mat-label>
+      <input #in5 matInput maxlength="15" [ngModel]="changes.rooms[4]" (ngModelChange)="changes.rooms[4] = $event;" placeholder="Mess Hall"/>
+    </mat-form-field>
+    <button (click)="in6.focus()" style="top: 384px; width: 60px; height: 105px; left: 22px;"></button>
+    <mat-form-field style="right: 10px; top: 450px;">
+      <mat-label>Room 6 (11+ players)</mat-label>
+      <input #in6 matInput maxlength="15" [ngModel]="changes.rooms[5]" (ngModelChange)="changes.rooms[5] = $event;" placeholder="Galley"/>
+    </mat-form-field>
+    <button (click)="in7.focus()" style="top: 490px; width: 130px; height: 90px; left: 28px;"></button>
+    <mat-form-field style="right: 0px; top: 530px;">
+      <mat-label>Room 7 (13+ players)</mat-label>
+      <input #in7 matInput maxlength="15" [ngModel]="changes.rooms[6]" (ngModelChange)="changes.rooms[6] = $event;" placeholder="Captain's Quarters"/>
+    </mat-form-field>
+  </div>
+
+  <!-- @for (room of [].constructor(pregame ? 7 : changes.requiredRooms); track room; let i = $index) {
   <div class="room-entry">
     <div class="option-tooltip" style="margin-bottom: 20px;" [style.margin-bottom]="i >= 4 ? '0px' : '20px'">
       <strong>Room {{i + 1}}</strong>
@@ -80,7 +123,7 @@
       <input matInput maxlength="15" [ngModel]="changes.rooms[i]" (ngModelChange)="changes.rooms[i] = $event;" [placeholder]="placeholderRooms[i]"/>
     </mat-form-field>
   </div>
-  }
+  } -->
   <div class="btn">
     <button mat-raised-button (click)="backend.updateGameOptions(changes)" color="primary">Done</button>
   </div>

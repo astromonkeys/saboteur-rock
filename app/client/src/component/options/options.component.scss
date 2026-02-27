@@ -40,6 +40,34 @@
         }
     }
 
+    .room-select {
+        display: flex;
+        justify-content: left;
+        position: relative;
+
+        canvas {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+
+        img {
+            height: 600px;
+        }
+
+        mat-form-field {
+            position: absolute;
+            height: 75px;
+            scale: 80%;
+        }
+
+        button {
+            position: absolute;
+            background: transparent;
+            border: none;
+        }
+    }
+
     .btn {
         display: flex;
         scale: 130%;

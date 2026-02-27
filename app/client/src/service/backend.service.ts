@@ -12,7 +12,7 @@ import { DialogType, ToasterService } from './toaster.service';
 })
 export class BackendService {
 
-  readonly DEBUG_MODE: boolean = false; // flip to false in release branches/playtests
+  readonly DEBUG_MODE: boolean = true; // flip to false in release branches/playtests
 
   enteredGameCode: string;
   enteredPlayerName: string;
