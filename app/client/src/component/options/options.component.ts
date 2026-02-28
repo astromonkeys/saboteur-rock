@@ -31,44 +31,44 @@ export class OptionsComponent {
 
   ngAfterViewInit() {
     let ctx = this.canvas.nativeElement.getContext('2d');
-    this.canvas.nativeElement.setAttribute('width', '400');
+    this.canvas.nativeElement.setAttribute('width', '200');
     this.canvas.nativeElement.setAttribute('height', '600');
     ctx.lineWidth = 2;
     // draw lines on room diagram
     // room 1
     ctx.beginPath();
     ctx.moveTo(100, 90);
-    ctx.lineTo(200, 60);
+    ctx.lineTo(210, 60);
     ctx.stroke();
     // room 2
     ctx.beginPath();
     ctx.moveTo(130, 175);
-    ctx.lineTo(210, 150);
+    ctx.lineTo(220, 150);
     ctx.stroke();
     // room 3
     ctx.beginPath();
     ctx.moveTo(55, 205);
-    ctx.lineTo(210, 220);
+    ctx.lineTo(220, 220);
     ctx.stroke();
     // room 4
     ctx.beginPath();
     ctx.moveTo(90, 300);
-    ctx.lineTo(200, 300);
+    ctx.lineTo(210, 300);
     ctx.stroke();
     // room 5
     ctx.beginPath();
     ctx.moveTo(130, 430);
-    ctx.lineTo(200, 380);
+    ctx.lineTo(210, 380);
     ctx.stroke();
     // room 6
     ctx.beginPath();
     ctx.moveTo(55, 440);
-    ctx.lineTo(190, 480);
+    ctx.lineTo(200, 480);
     ctx.stroke();
     // room 7
     ctx.beginPath();
     ctx.moveTo(100, 550);
-    ctx.lineTo(200, 560);
+    ctx.lineTo(210, 560);
     ctx.stroke();
   }
 
