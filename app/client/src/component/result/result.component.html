@@ -1,25 +1,6 @@
-<!-- Special role results -->
-@if (ss.resultState == types.ResultState.ABILITY) {
 <div class="results">
-    <h1 class="heading">Special Role Results</h1>
-    @if (backend.game.voteResults[backend.game.roundIndex].veto) {
-    <result-card [inner]="res.vetoHTML()" [bgColor]="res.vetoColor"></result-card>
-    }
-    <result-card [inner]="res.professorSaboteurHTML(this.backend.game.voteResults[this.backend.game.roundIndex].professorSaboteur)" [bgColor]="res.professorSaboteurColor"></result-card>
-    <result-card [inner]="res.sosHTML(this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.sosColor"></result-card>
-    <result-card [inner]="res.silencedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].silenced)" [bgColor]="res.silencedColor"></result-card>
-    <result-card [inner]="res.executedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].executed, backend.game.voteResults[backend.game.roundIndex].veto, this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.executedColor"></result-card>
-    <div class="btn">
-        <button mat-raised-button (click)="next()" color="primary">Next</button>
-    </div>
-</div>
-}
-
-<!-- Elimination results -->
-@if (ss.resultState == types.ResultState.ELIMINATED && backend.game.voteResults[backend.game.roundIndex].tieResolved) {
-<div class="results">
-    <h1 class="heading">Elimination Results</h1>
-    <div class="card">
+    <h1 class="heading">Results</h1>
+        <div class="card">
         <mat-card>
             <mat-card-content>
                 @if (!backend.game.voteResults[backend.game.roundIndex].veto) {
@@ -46,53 +27,26 @@
             </mat-card-content>
         </mat-card>
     </div>
-    @if (!backend.game.voteResults[backend.game.roundIndex].tie) {
-    <div class="btn">
-        <button mat-raised-button (click)="this.ss.resultState = types.ResultState.SUMMARY" color="primary">Next</button>
-    </div>
-    }
-    @if (backend.player.isHost && backend.game.voteResults[backend.game.roundIndex].tie) {
-    <div class="btn" style="margin-bottom: 30px;">
-        <button mat-raised-button (click)="backend.generateRound()" color="primary">Next Round</button>
-    </div>
-    }
-</div>
-}
-
-<!-- Summary -->
-@if (ss.resultState == types.ResultState.SUMMARY) {
-<div class="results">
-    <h1 class="heading nospace">Summary</h1>
-    <div class="card">
-        <mat-card style="width: 100%">
-            <mat-card-content>
-                <div #chart class="chart">
-                    <apx-chart [series]="ss.chartOptions.series" [title]="ss.chartOptions.title" [colors]="ss.chartOptions.colors" [legend]="ss.chartOptions.legend" [tooltip]="ss.chartOptions.tooltip" [chart]="ss.chartOptions.chart" [dataLabels]="ss.chartOptions.dataLabels" [plotOptions]="ss.chartOptions.plotOptions" [xaxis]="ss.chartOptions.xaxis"></apx-chart>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
     @if (backend.game.voteResults[backend.game.roundIndex].veto) {
-    <result-card [inner]="res.vetoHTML()" [bgColor]="res.vetoColor"></result-card>
+    <result-card [role]="types.RoleName.PRESIDENT" [inner]="res.vetoHTML()" [bgColor]="res.vetoColor"></result-card>
     }
-    <result-card [inner]="res.professorSaboteurHTML(this.backend.game.voteResults[this.backend.game.roundIndex].professorSaboteur)" [bgColor]="res.professorSaboteurColor"></result-card>
-    <result-card [inner]="res.sosHTML(this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.sosColor"></result-card>
-    <result-card [inner]="res.silencedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].silenced)" [bgColor]="res.silencedColor"></result-card>
-    <result-card [inner]="res.executedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].executed, backend.game.voteResults[backend.game.roundIndex].veto, this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.executedColor"></result-card>
+    <result-card [role]="types.RoleName.PROFESSOR" [inner]="res.professorSaboteurHTML(this.backend.game.voteResults[this.backend.game.roundIndex].professorSaboteur)" [bgColor]="res.professorSaboteurColor"></result-card>
+    <result-card [role]="types.RoleName.MEDIC" [inner]="res.sosHTML(this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.sosColor"></result-card>
+    <result-card [role]="types.RoleName.SILENCER" [inner]="res.silencedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].silenced)" [bgColor]="res.silencedColor"></result-card>
+    <result-card [role]="types.RoleName.EXECUTIONER" [inner]="res.executedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].executed, backend.game.voteResults[backend.game.roundIndex].veto, this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.executedColor"></result-card>
     @if (backend.player.isHost && !backend.game.victory && !backend.game.voteResults[backend.game.roundIndex].tieResolved) {
-    <div class="btn">
+    <div class="btn" style="padding-bottom: 20px;">
         <button mat-raised-button (click)="backend.sendToTiebreaker()" color="primary">Tiebreaker</button>
     </div>
     }
     @if (backend.player.isHost && !backend.game.victory && backend.game.voteResults[backend.game.roundIndex].tieResolved) {
-    <div class="btn">
+    <div class="btn" style="padding-bottom: 20px;">
         <button mat-raised-button (click)="backend.generateRound()" color="primary">Next Round</button>
     </div>
     }
     @if (backend.player.isHost && backend.game.victory) {
-    <div class="btn">
+    <div class="btn" style="padding-bottom: 20px;">
         <button mat-raised-button (click)="backend.victory()" color="primary">Final Results</button>
     </div>
     }
 </div>
-}

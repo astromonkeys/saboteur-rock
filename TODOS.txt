@@ -1,8 +1,6 @@
 This is an informal document just for Noah to remember what he's doing
 
 Current:
-- when start game button is disabled, if clicked show a tooltip as to why (# of players not reached, rooms not named, etc.)
-- result screen could definitely use sprucing up - make use of the icons Zach made
 - Display UI is generally garbage and should be much better
 
 Backlog:

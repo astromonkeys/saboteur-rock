@@ -58,12 +58,11 @@
             }
 
             .invisible-btns {
-                position: relative;
 
                 button {
                     position: absolute;
                     background: transparent;
-                    //border: none;
+                    border: none;
                     z-index: 3;
                 }
             }

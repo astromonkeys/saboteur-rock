@@ -4,6 +4,15 @@
     text-align: center;
     width: 100%;
     margin-bottom: 20px;
+    position: relative;
+
+    img {
+        height: 30px;
+        position: absolute;
+        left: -10px;
+        z-index: 1;
+        top: 20%;
+    }
 
     >.mat-mdc-card {
         width: 100%;

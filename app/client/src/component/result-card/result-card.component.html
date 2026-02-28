@@ -1,8 +1,9 @@
 <div class="container">
+    <img [src]="roleIcon" [ngStyle]="{'left': executioner ? '-18px' : '-10px'}"/>
     <mat-card [ngStyle]="{'background': bgColor}">
         <!-- <div class="accent-line"></div> -->
         <mat-card-content>
-            <p [innerHTML]="inner"></p>
+            <p [innerHTML]="inner" style="margin-left: 20px;"></p>
         </mat-card-content>
         <!-- <div class="accent-line"></div> -->
     </mat-card>

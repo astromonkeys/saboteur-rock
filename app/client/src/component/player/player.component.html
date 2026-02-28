@@ -293,7 +293,7 @@
         <p>(Unless you are told to open them)</p>
       } @else {
         <h3>Keep your identity hidden!</h3>
-        <p>(Tap the card to hide)</p>
+        <p>(Tap your card to hide)</p>
       }
     </div>
     <div class="card-container">
@@ -423,7 +423,7 @@
     }
     @if (backend.game.state == types.GamePhase.PREVOTE) {
     <div class="prevote" style="margin-top: 20vh;">
-      <h1>Time to vote!</h1>
+      <h1>Tribunal!</h1>
       <img src="/client/assets/icons/vote.svg" style="height: 100px;">
       <p>Please proceed to the voting pit - talking is&nbsp;<b>not</b>&nbsp;allowed!</p>
       @if (backend.player.isHost) {
