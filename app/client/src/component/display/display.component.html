@@ -1,15 +1,15 @@
 @if (ss.uiState == types.UIState.HOME) {
 <div class="home-display fade-in">
-  <h1>Welcome to Saboteur Rock!</h1>
+  <h1 class="breathing">Welcome to Saboteur Rock!</h1>
+  <img class="logo" src="/client/assets/logo/logo.svg" />
   <div class="mid-container">
     <div class="left">
-      <img src="/client/assets/logo/logo.svg" />
-    </div>
-    <div class="right">
       <mat-form-field style="scale: 130%;">
         <mat-label>Game Code</mat-label>
         <input matInput maxlength="4" (input)="onCodeInput()" [(ngModel)]="backend.enteredGameCode" placeholder="ABCD" />
       </mat-form-field>
+    </div>
+    <div class="right">
       <button mat-raised-button audibleClick [disabled]="(backend.enteredGameCode && backend.enteredGameCode.length != 4)" (click)="joinAsDisplay()" color="primary">Join as Display</button>
       @if (backend.showGameCodeError) {
       <p class="error-text">Game with
