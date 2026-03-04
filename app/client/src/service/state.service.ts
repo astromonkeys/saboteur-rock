@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { UIState, VoteState, ResultState, MarooningState, VoteResults, Player } from 'saboteur-lib';
 import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexXAxis, ApexPlotOptions, ApexTooltip, ApexLegend, ApexTitleSubtitle } from "ng-apexcharts";
 import { ResourceService } from './resource.service';
+import { Observable } from 'rxjs';
 
 export type ChartOptions = {
   title: ApexTitleSubtitle;
@@ -32,12 +33,18 @@ export class StateService {
   public marooningState: MarooningState = MarooningState.NORMAL;
   public marooningActive: boolean = false; // is the marooning audio playing?
 
-  private roundResults: VoteResults;
+  public roundResults: VoteResults;
   public chartOptions: Partial<ChartOptions>;
+
+  // for now, only used by display player
+  public _stateChange: EventEmitter<UIState> = new EventEmitter<UIState>();
+  public stateChange: Observable<UIState>;
 
   constructor(
     private res: ResourceService
-  ) { }
+  ) { 
+    this.stateChange = this._stateChange.asObservable();
+  }
 
   showTopBanner(): boolean {
     return this.showTipMenu || this.showOptions;

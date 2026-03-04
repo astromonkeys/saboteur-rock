@@ -70,7 +70,7 @@ export class VictoryComponent {
       this.res.getImage(players[i].name).then((data) => {
         let img = new Image(this.imgRadius, this.imgRadius);
         // nested ternary operators, neat
-        img.src = this.deadWinners.concat(this.deadLosers).find((el) => el.name == players[i].name) ? this.res.deadAvatar : (data ? URL.createObjectURL(new Blob([data])) : this.res.emptyAvatar);
+        img.src = this.deadWinners.concat(this.deadLosers).find((el) => el.name == players[i].name) ? this.res.deadAvatar : (data ? URL.createObjectURL(new Blob([data as BlobPart])) : this.res.emptyAvatar);
         this.bouncingPlayers.push({
           x: Math.random() * (this.ctx.canvas.width - this.imgRadius) + this.imgRadius,
           y: Math.random() * (this.ctx.canvas.height - this.imgRadius) + this.imgRadius,

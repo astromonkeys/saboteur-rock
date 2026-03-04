@@ -4,8 +4,11 @@ import { AudioService } from '../../service/audio.service';
 import { BackendService } from '../../service/backend.service';
 import { ResourceService } from '../../service/resource.service';
 import { StateService } from '../../service/state.service';
-import splashTextJSONData from 'app/client/assets/json/splash_text.json';
+import lobbySplashText from 'app/client/assets/json/splash_text.json';
+import infoSplashText from 'app/client/assets/json/splash_text_info.json';
 import { TypeService } from '../../service/type.service';
+import { UIState } from 'saboteur-lib';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-display',
@@ -17,9 +20,11 @@ export class DisplayComponent {
   @ViewChild("chart") chart: ChartComponent;
   @ViewChild("splashTextRef") splashTextRef: ElementRef;
 
-  splashTextMasterList: string[] = splashTextJSONData; // what we reset to
+  splashTextMasterList: string[] = infoSplashText; // what we reset to
   splashTextBank: string[] = [...this.splashTextMasterList]; // where we pull from
   splashText: string;
+
+  stateSub: Subscription;
 
   get numCols(): number { return Math.min(this.backend.game.rounds[this.backend.game.roundIndex].length, 7); }
 
@@ -47,6 +52,16 @@ export class DisplayComponent {
     // remove intro text, which is always shown first
     this.splashText = this.splashTextBank[0];
     this.splashTextBank.splice(0, 1);
+    this.stateSub = this.ss.stateChange.subscribe((state) => {
+      if (state == UIState.LOBBY) {
+        this.splashTextMasterList = lobbySplashText;
+        this.splashTextBank = [...this.splashTextMasterList];
+      } else if(state == UIState.HOME) {
+        this.splashTextMasterList = infoSplashText;
+        this.splashTextBank = [...this.splashTextMasterList];
+      }
+      this.resetSplashText();
+    });
   }
 
   onCodeInput() {
@@ -110,7 +125,7 @@ export class DisplayComponent {
     return newText;
   }
 
-  resetSplashText(ev: any) {
+  resetSplashText() {
     // reset animation
     this.splashTextRef.nativeElement.classList.remove('splash-text');
     setTimeout(() => this.splashTextRef.nativeElement.classList.add('splash-text'), 10);

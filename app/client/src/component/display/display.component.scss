@@ -1,3 +1,26 @@
+.splash-text-wrapper {
+        margin: 0;
+        font-size: 2vw;
+
+        span {
+            opacity: 0;
+        }
+
+        .splash-text {
+            animation-delay: 1.5s;
+            animation-fill-mode: forwards;
+            -webkit-animation-fill-mode: forwards;
+            width: 100%;
+            float: left;
+            -webkit-clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
+            clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
+            transform: translateY(-50px);
+            opacity: 0;
+            animation-name: titleAnimation;
+            animation-timing-function: ease;
+        }
+    }
+
 .home-display {
     display: flex;
     flex-direction: column;
@@ -93,30 +116,6 @@
         .player-ct {
             font-size: xx-large;
             margin-top: -20px;
-        }
-    }
-
-    h2 {
-        margin: 0;
-        font-size: 2vw;
-
-        span {
-            opacity: 0;
-        }
-
-        .splash-text {
-            animation-delay: 1.5s;
-            animation-fill-mode: forwards;
-            -webkit-animation-fill-mode: forwards;
-            width: 100%;
-            float: left;
-            -webkit-clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
-            clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
-            transform: translateY(-50px);
-            opacity: 0;
-            animation-name: titleAnimation;
-            animation-timing-function: ease;
-            animation-duration: 15s;
         }
     }
 

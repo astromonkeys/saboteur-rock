@@ -127,6 +127,9 @@ export class BackendService {
           this.toast.toast('Display player connected', 3500);
           this.audio.stopMusic();
         }
+        if (this.player.isDisplay) {
+          this.ss._stateChange.emit(UIState.LOBBY);
+        }
       } else {
         // if old host reconnects, strip host duties from everyone else
         if (isHost && this.player.name != newPlayer) { this.player.isHost = false; }
