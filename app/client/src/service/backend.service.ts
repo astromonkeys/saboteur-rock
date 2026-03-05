@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Haptics } from '@capacitor/haptics';
 import { Socket } from 'ngx-socket-io';
-import { ServerRequest, ServerMsg, UIState, GamePhase, VoteState, Player, SaboteurRockGame, Vote, ResultState, MarooningState, RoleName, PlayerImg, ServerError, CustomPlayer, GameOptions } from 'saboteur-lib';
+import { ServerRequest, ServerMsg, UIState, GamePhase, VoteState, Player, SaboteurRockGame, Vote, ResultState, MarooningState, RoleName, PlayerImg, ServerError, CustomPlayer, GameOptions, Team } from 'saboteur-lib';
 import { AudioService } from './audio.service';
 import { ResourceService } from './resource.service';
 import { StateService } from './state.service';
@@ -27,6 +27,14 @@ export class BackendService {
   reloadNeeded: boolean = false;
 
   marooningDone: boolean = false;
+
+  get winners(): Player[] { return this.game.victory == Team.PASSENGERS ? this.game.passengers : this.game.stowaways; }
+  get losers(): Player[] { return this.game.victory == Team.PASSENGERS ? this.game.stowaways : this.game.passengers; }
+
+  get livingWinners(): Player[] { return this.winners.filter((player) => !player.isDead); }
+  get deadWinners(): Player[] { return this.winners.filter((player) => player.isDead); }
+  get livingLosers(): Player[] { return this.losers.filter((player) => !player.isDead); }
+  get deadLosers(): Player[] { return this.losers.filter((player) => player.isDead); }
 
   private _game: SaboteurRockGame; // stores information needed for display in UI. backend calls/responses keep this in sync with the server
   get game(): SaboteurRockGame { return this._game; }

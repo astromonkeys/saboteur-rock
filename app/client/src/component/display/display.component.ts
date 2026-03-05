@@ -9,6 +9,7 @@ import infoSplashText from 'app/client/assets/json/splash_text_info.json';
 import { TypeService } from '../../service/type.service';
 import { UIState } from 'saboteur-lib';
 import { Subscription } from 'rxjs';
+import { BouncingImgComponent } from '../bouncing-img/bouncing-img.component';
 
 @Component({
   selector: 'app-display',

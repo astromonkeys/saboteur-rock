@@ -17,6 +17,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { VictoryComponent } from './component/victory/victory.component';
 import { ResultCardComponent } from './component/result-card/result-card.component';
 import { OptionsComponent } from './component/options/options.component';
+import { BouncingImgComponent } from './component/bouncing-img/bouncing-img.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { OptionsComponent } from './component/options/options.component';
     ResultComponent,
     AvatarComponent,
     VictoryComponent,
+    BouncingImgComponent,
     ResultCardComponent,
   ],
   providers: [CdkColumnDef],

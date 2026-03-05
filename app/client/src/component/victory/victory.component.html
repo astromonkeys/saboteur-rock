@@ -1,5 +1,5 @@
 @if (display) {
-<canvas #canvas></canvas>
+<bouncing-img></bouncing-img>
 }
 <div class="wrapper" [ngStyle]="{'background': backend.game.victory == types.Team.STOWAWAYS ? res.stowawayOrange : res.passengerBlue}">
   <div class="victory">
@@ -16,7 +16,7 @@
         <mat-card>
           <mat-card-content>
             <div>
-              @for (player of livingWinners; track player.name) {
+              @for (player of backend.livingWinners; track player.name) {
               <div style="display: flex; align-items: center;">
                 <app-avatar class="avatar" [name]="player.name" [compact]="true"></app-avatar>
                 <img [src]="res.getRoleIcon(player.role.name)" style="height: 25px; " />
@@ -24,7 +24,7 @@
               }
             </div>
             <div>
-              @for (player of deadWinners; track player.name) {
+              @for (player of backend.deadWinners; track player.name) {
               <div style="display: flex; align-items: center;">
                 <app-avatar class="avatar" [name]="player.name" [compact]="true" [dead]="true"></app-avatar>
                 <img [src]="res.getRoleIcon(player.role.name)" style="height: 25px; " />
@@ -38,7 +38,7 @@
         <mat-card>
           <mat-card-content>
             <div>
-              @for (player of livingLosers; track player.name) {
+              @for (player of backend.livingLosers; track player.name) {
               <div style="display: flex; align-items: center;">
                 <app-avatar class="avatar" [name]="player.name" [compact]="true"></app-avatar>
                 <img [src]="res.getRoleIcon(player.role.name)" style="height: 25px; " />
@@ -46,7 +46,7 @@
               }
             </div>
             <div>
-              @for (player of deadLosers; track player.name) {
+              @for (player of backend.deadLosers; track player.name) {
               <div style="display: flex; align-items: center;">
                 <app-avatar class="avatar" [name]="player.name" [compact]="true" [dead]="true"></app-avatar>
                 <img [src]="res.getRoleIcon(player.role.name)" style="height: 25px; " />

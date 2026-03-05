@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MaterialModule } from '../../material/material.module';
 import { RoleName } from 'saboteur-lib';
+import { ResourceService } from '../../service/resource.service';
 
 @Component({
   selector: 'result-card',
@@ -15,11 +16,11 @@ export class ResultCardComponent {
   @Input() inner: string;
   @Input() bgColor: string;
 
-  get roleIcon(): string {
-    return `client/assets/icons/role_icons/${this.role}.svg`
-  }
+  constructor(
+    public res: ResourceService
+  ) { }
 
-  get executioner(): boolean { 
+  get executioner(): boolean {
     return this.role == RoleName.EXECUTIONER;
   }
 
