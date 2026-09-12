@@ -20,6 +20,9 @@
       <p class="error-text">Game with
         code&nbsp;<strong>{{backend.enteredGameCode.toUpperCase()}}</strong>&nbsp;has already begun.</p>
       }
+      @if (!backend.showGameStartedError && !backend.showGameCodeError) {
+      <p class="error-text"></p>
+      }
     </div>
   </div>
   <h2 class="breathing splash-text-wrapper" style="margin-top: 6vh;">
@@ -196,10 +199,10 @@
         @if (backend.game.voteResults[backend.game.roundIndex].veto) {
         <result-card [inner]="res.vetoHTML()" [bgColor]="res.vetoColor"></result-card>
         }
-        <result-card [inner]="res.professorSaboteurHTML(this.backend.game.voteResults[this.backend.game.roundIndex].professorSaboteur)" [bgColor]="res.professorSaboteurColor"></result-card>
-        <result-card [inner]="res.sosHTML(this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.sosColor"></result-card>
-        <result-card [inner]="res.silencedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].silenced)" [bgColor]="res.silencedColor"></result-card>
-        <result-card [inner]="res.executedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].executed, backend.game.voteResults[backend.game.roundIndex].veto, this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.executedColor"></result-card>
+        <result-card [role]="types.RoleName.PROFESSOR" [inner]="res.professorSaboteurHTML(this.backend.game.voteResults[this.backend.game.roundIndex].professorSaboteur)" [bgColor]="res.professorSaboteurColor"></result-card>
+        <result-card [role]="types.RoleName.MEDIC" [inner]="res.sosHTML(this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.sosColor"></result-card>
+        <result-card [role]="types.RoleName.SILENCER" [inner]="res.silencedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].silenced)" [bgColor]="res.silencedColor"></result-card>
+        <result-card [role]="types.RoleName.EXECUTIONER" [inner]="res.executedHTML(this.backend.game.voteResults[this.backend.game.roundIndex].executed, backend.game.voteResults[backend.game.roundIndex].veto, this.backend.game.voteResults[this.backend.game.roundIndex].sos)" [bgColor]="res.executedColor"></result-card>
       </div>
     </div>
   </div>
